@@ -1,9 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace allspice.Models;
 
-public class Account
+// NOTE Separating Email from other class properties so that it does not need to be sent over network unless needed for security reasons.
+
+public class Account : Profile
 {
-  public string Id { get; set; }
-  public string Name { get; set; }
-  public string Email { get; set; }
-  public string Picture { get; set; }
+  [MaxLength(255)] public string Email { get; set; }
+
+}
+
+public class Profile : RepoItem<string>
+{
+  [MaxLength(255)] public string Name { get; set; }
+  [MaxLength(2000)] public string Picture { get; set; }
 }
