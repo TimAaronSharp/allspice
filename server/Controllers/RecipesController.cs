@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace allspice.Controllers;
 
 [ApiController]
@@ -11,4 +13,21 @@ public class RecipesController : ControllerBase
   }
   private readonly RecipesService _recipesService;
   private readonly Auth0Provider _auth0Provider;
+
+  [Authorize]
+  [HttpPost]
+
+  public async Task<ActionResult<Recipe>> Create([FromBody] Recipe recipeData)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      recipeData.CreatorId = userInfo.Id;
+      return Ok(_recipesService.Create(recipeData));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }

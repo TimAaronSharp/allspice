@@ -8,4 +8,9 @@ public class RecipesService
     _repo = repo;
   }
   private readonly RecipesRepository _repo;
+
+  public Recipe Create(Recipe recipeData)
+  {
+    return _repo.Create(recipeData);
+  }
 }
