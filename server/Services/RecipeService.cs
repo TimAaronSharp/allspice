@@ -13,4 +13,9 @@ public class RecipesService
   {
     return _repo.Create(recipeData);
   }
+
+  public List<Recipe> GetAll()
+  {
+    return _repo.GetAll();
+  }
 }
