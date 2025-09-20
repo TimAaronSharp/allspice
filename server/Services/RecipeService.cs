@@ -1,3 +1,4 @@
+
 namespace allspice.Services;
 
 public class RecipesService
@@ -17,5 +18,18 @@ public class RecipesService
   public List<Recipe> GetAll()
   {
     return _repo.GetAll();
+  }
+
+  public Recipe GetById(int recipeId)
+  {
+    Recipe recipe = _repo.GetById(recipeId);
+
+    if (recipe == null)
+    {
+      throw new Exception($"Invalid recipe id: {recipeId}");
+    }
+
+    return recipe;
+
   }
 }
