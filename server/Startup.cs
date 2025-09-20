@@ -14,8 +14,8 @@ public class Startup
   public Startup(IConfiguration configuration)
   {
     Configuration = configuration;
-    
-      // converts snake_case to PascalCase
+
+    // converts snake_case to PascalCase
     DefaultTypeMap.MatchNamesWithUnderscores = true;
   }
 
@@ -36,6 +36,9 @@ public class Startup
 
     services.AddScoped<AccountsRepository>();
     services.AddScoped<AccountService>();
+
+    services.AddScoped<RecipesRepository>();
+    services.AddScoped<RecipesService>();
   }
 
   private void ConfigureCors(IServiceCollection services)
@@ -63,8 +66,8 @@ public class Startup
       options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     }).AddJwtBearer(options =>
     {
-      options.Authority = $"https://{Configuration["AUTH_DOMAIN"]}/";
-      options.Audience = Configuration["AUTH_AUDIENCE"];
+      options.Authority = $"https://{Configuration["AUTH0_DOMAIN"]}/";
+      options.Audience = Configuration["AUTH0_AUDIENCE"];
     });
 
   }

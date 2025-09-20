@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     picture VARCHAR(255) COMMENT 'User Picture'
 ) default charset utf8mb4 COMMENT '';
 
--- CREATE TABLES BEGIN
+-- allspice_recipes BEGIN
 CREATE TABLE allspice_recipes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -26,6 +26,26 @@ CREATE TABLE allspice_recipes (
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
+INSERT INTO
+    allspice_recipes (
+        title,
+        instructions,
+        img,
+        category,
+        creator_id
+    )
+VALUES (
+        'Test title',
+        'Test instructions',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg/1200px-Good_Food_Display_-_NCI_Visuals_Online.jpg',
+        'dinner',
+        '67e3273fee37d52171a8018c'
+    )
+
+-- allspice_recipes END
+
+-- allspice_altered_recipes BEGIN
+
 CREATE TABLE allspice_altered_recipes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -33,6 +53,10 @@ CREATE TABLE allspice_altered_recipes (
     recipe_id INT NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
 )
+
+-- allspice_altered_recipes END
+
+-- allspice_ingredients BEGIN
 
 CREATE TABLE allspice_ingredients (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -46,6 +70,10 @@ CREATE TABLE allspice_ingredients (
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
+-- allspice_ingredients END
+
+-- allspice_favorites BEGIN
+
 CREATE TABLE allspice_favorites (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -55,6 +83,10 @@ CREATE TABLE allspice_favorites (
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
 )
+
+-- allspice_favorites END
+
+-- allspice_recipe_notes BEGIN
 
 CREATE TABLE allspice_recipe_notes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -67,6 +99,10 @@ CREATE TABLE allspice_recipe_notes (
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
+-- allspice_recipe_notes END
+
+-- allspice_recipe_comments BEGIN
+
 CREATE TABLE allspice_recipe_comments (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -75,7 +111,10 @@ CREATE TABLE allspice_recipe_comments (
     creator_id VARCHAR(255) NOT NULL
 )
 
-CREATE TABLE allspice_likes (
+-- allspice_recipe_comments END
+
+-- allspice_recipe_comments_likes BEGIN
+CREATE TABLE allspice_recipe_comments_likes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -85,4 +124,4 @@ CREATE TABLE allspice_likes (
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
--- CREATE TABLES END
+-- allspice_recipe_comments_likes END

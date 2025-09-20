@@ -9,7 +9,7 @@ public class Recipe : RepoItem<int>
   [Url, MaxLength(2000)] public string Img { get; set; }
   [MaxLength(255)] public string Category { get; set; }
   [MaxLength(255)] public string CreatorId { get; set; }
-  [MaxLength(255)] public Profile Creator { get; set; }
+  public Profile Creator { get; set; }
 }
 
 public class AlteredRecipe : Recipe
