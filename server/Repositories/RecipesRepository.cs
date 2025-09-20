@@ -33,6 +33,18 @@ public class RecipesRepository
     }, recipeData).SingleOrDefault();
   }
 
+  public void Delete(int recipeId)
+  {
+    string sql = "DELETE FROM allspice_recipes WHERE id = @recipeId LIMIT 1;";
+
+    int rowsAffected = _db.Execute(sql, new { recipeId });
+
+    if (rowsAffected != 1)
+    {
+      throw new Exception($"{rowsAffected} were deleted, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
+    }
+  }
+
   public void Edit(Recipe recipeToUpdateData)
   {
     string sql = @"

@@ -15,6 +15,18 @@ public class RecipesService
     return _repo.Create(recipeData);
   }
 
+  public string Delete(int recipeId, Profile userInfo)
+  {
+    Recipe recipeToDelete = GetById(recipeId);
+
+    if (recipeToDelete.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot delete another user's recipe, {userInfo.Name}.".ToUpper());
+    }
+    _repo.Delete(recipeId);
+    return $"Recipe {recipeToDelete.Title} has been deleted. You monster.";
+  }
+
   public Recipe Edit(Profile userInfo, Recipe updateRecipeData, int recipeId)
   {
     Recipe recipeToUpdate = GetById(recipeId);
