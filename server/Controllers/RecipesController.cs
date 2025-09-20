@@ -31,6 +31,22 @@ public class RecipesController : ControllerBase
     }
   }
 
+  [Authorize]
+  [HttpPut("{recipeId}")]
+  public async Task<ActionResult<Recipe>> Edit([FromBody] Recipe updateRecipeData, int recipeId)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      return Ok(_recipesService.Edit(userInfo, updateRecipeData, recipeId));
+    }
+    catch (Exception exception)
+    {
+
+      return BadRequest(exception.Message);
+    }
+  }
+
   [HttpGet]
   public ActionResult<List<Recipe>> GetAll()
   {

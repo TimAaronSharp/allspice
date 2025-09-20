@@ -1,5 +1,6 @@
 
 
+
 namespace allspice.Repositories;
 
 public class RecipesRepository
@@ -30,6 +31,25 @@ public class RecipesRepository
       recipe.Creator = account;
       return recipe;
     }, recipeData).SingleOrDefault();
+  }
+
+  public void Edit(Recipe recipeToUpdateData)
+  {
+    string sql = @"
+    UPDATE allspice_recipes
+    SET
+    title = @Title,
+    instructions = @Instructions,
+    img = @Img,
+    category = @Category
+    WHERE id = @id LIMIT 1;";
+
+    int rowsAffected = _db.Execute(sql, recipeToUpdateData);
+
+    if (rowsAffected != 1)
+    {
+      throw new Exception($"{rowsAffected} were updated, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
+    }
   }
 
   public List<Recipe> GetAll()
