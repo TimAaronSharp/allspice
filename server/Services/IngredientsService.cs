@@ -13,8 +13,14 @@ public class IngredientsService
   private readonly IngredientsRepository _repo;
   private readonly RecipesService _recipesService;
 
-  public Ingredient Create(Ingredient ingredientData)
+  public Ingredient Create(Ingredient ingredientData, Profile userInfo)
   {
+    Recipe recipe = _recipesService.GetById(ingredientData.RecipeId);
+
+    if (recipe.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot create an ingredient on another user's recipe, {userInfo.Name}.".ToUpper());
+    }
     return _repo.Create(ingredientData);
   }
 
