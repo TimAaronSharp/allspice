@@ -31,26 +31,16 @@ public class IngredientsRepository
     }, ingredientData).SingleOrDefault();
   }
 
-  public List<Ingredient> GetByRecipeId(int recipeId)
+  public void Delete(int ingredientId)
   {
-    string sql = @"
-    SELECT
-    allspice_ingredients.*,
-    allspice_recipes.*
-    FROM allspice_ingredients
-    INNER JOIN allspice_recipes ON allspice_recipes.id = allspice_ingredients.recipe_id
-    WHERE allspice_ingredients.recipe_id = @recipeId;";
+    string sql = "DELETE FROM allspice_ingredients WHERE id = @ingredientId LIMIT 1;";
 
-    return _db.Query(sql, (Ingredient ingredient, Recipe recipe) =>
+    int rowsAffected = _db.Execute(sql, new { ingredientId });
+
+    if (rowsAffected != 1)
     {
-      ingredient.RecipeId = recipe.Id;
-      return ingredient;
-    }, new { recipeId }).ToList();
-  }
-
-  internal Ingredient GetById(int ingredientId)
-  {
-    throw new NotImplementedException();
+      throw new Exception($"{rowsAffected} ingredients were deleted, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
+    }
   }
 
   public void Edit(Ingredient ingredientToUpdate)
@@ -68,5 +58,29 @@ public class IngredientsRepository
     {
       throw new Exception($"{rowsAffected} ingredients were update, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
     }
+  }
+
+  public Ingredient GetById(int ingredientId)
+  {
+    string sql = "SELECT * FROM allspice_ingredients WHERE allspice_ingredients.id = @ingredientId;";
+
+    return _db.Query<Ingredient>(sql, new { ingredientId }).SingleOrDefault();
+  }
+
+  public List<Ingredient> GetByRecipeId(int recipeId)
+  {
+    string sql = @"
+    SELECT
+    allspice_ingredients.*,
+    allspice_recipes.*
+    FROM allspice_ingredients
+    INNER JOIN allspice_recipes ON allspice_recipes.id = allspice_ingredients.recipe_id
+    WHERE allspice_ingredients.recipe_id = @recipeId;";
+
+    return _db.Query(sql, (Ingredient ingredient, Recipe recipe) =>
+    {
+      ingredient.RecipeId = recipe.Id;
+      return ingredient;
+    }, new { recipeId }).ToList();
   }
 }
