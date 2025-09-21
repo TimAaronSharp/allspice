@@ -1,4 +1,5 @@
 
+
 namespace allspice.Repositories;
 
 public class IngredientsRepository
@@ -45,5 +46,27 @@ public class IngredientsRepository
       ingredient.RecipeId = recipe.Id;
       return ingredient;
     }, new { recipeId }).ToList();
+  }
+
+  internal Ingredient GetById(int ingredientId)
+  {
+    throw new NotImplementedException();
+  }
+
+  public void Edit(Ingredient ingredientToUpdate)
+  {
+    string sql = @"
+    UPDATE allspice_ingredients
+    SET
+    name = @Name,
+    quantity = @Quantity
+    WHERE id = @id LIMIT 1;";
+
+    int rowsAffected = _db.Execute(sql, ingredientToUpdate);
+
+    if (rowsAffected != 1)
+    {
+      throw new Exception($"{rowsAffected} ingredients were update, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
+    }
   }
 }

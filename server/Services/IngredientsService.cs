@@ -1,5 +1,6 @@
 
 
+
 namespace allspice.Services;
 
 public class IngredientsService
@@ -17,6 +18,33 @@ public class IngredientsService
     return _repo.Create(ingredientData);
   }
 
+  public Ingredient Edit(Ingredient updateIngredientData, int ingredientId, Profile userInfo)
+  {
+    Ingredient ingredientToUpdate = GetById(ingredientId);
+
+    if (ingredientToUpdate.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot edit another user's ingredient, {userInfo.Name}.".ToUpper());
+    }
+
+    ingredientToUpdate.Name = updateIngredientData.Name ?? ingredientToUpdate.Name;
+    ingredientToUpdate.Quantity = updateIngredientData.Quantity ?? ingredientToUpdate.Quantity;
+
+    _repo.Edit(ingredientToUpdate);
+    return ingredientToUpdate;
+  }
+
+  private Ingredient GetById(int ingredientId)
+  {
+    Ingredient ingredient = _repo.GetById(ingredientId);
+
+    if (ingredient == null)
+    {
+      throw new Exception($"Invalid ingredient id: {ingredientId}");
+    }
+
+    return ingredient;
+  }
   public List<Ingredient> GetByRecipeId(int recipeId)
   {
     Recipe recipe = GetRecipeById(recipeId);
