@@ -7,4 +7,9 @@ public class IngredientsService
     _repo = repo;
   }
   private readonly IngredientsRepository _repo;
+
+  public Ingredient Create(Ingredient ingredientData)
+  {
+    return _repo.Create(ingredientData);
+  }
 }
