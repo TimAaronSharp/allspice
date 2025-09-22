@@ -30,6 +30,8 @@ public class AccountController : ControllerBase
     }
   }
 
+  // NOTE 🔍🧺🧑‍🦲 Get all favorite recipes by account id method. Gets user info and sends the user's account id to service.
+
   [Authorize]
   [HttpGet("{favorites}")]
   public async Task<ActionResult<List<FavoriteRecipe>>> GetFavoriteRecipesByAccountId()
