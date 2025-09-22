@@ -14,5 +14,5 @@ public class Recipe : RepoItem<int>
 
 public class AlteredRecipe : Recipe
 {
-  public int AlteredRecipeId { get; set; }
+  public int BaseRecipeId { get; set; }
 }
