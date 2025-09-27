@@ -6,3 +6,4 @@ USER STORIES/BUSINESS RULES
 
 - Notes for recipes that only the note creator can see.
 
+// NOTE When creating an altered recipe have it add the new altered recipe id to AlternateRecipeIds. When an altered recipe is being viewed have it check if the RecipeId == CreatedFromRecipeId. If not, have it check if the (alternate) recipe id is in the list of AlternateRecipeIds. This MIGHT be a viable path to not needing to make extra copies of unaltered ingredients.
