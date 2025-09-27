@@ -7,5 +7,4 @@ public class Ingredient : RepoItem<int>
   [MaxLength(255)] public string Name { get; set; }
   [MaxLength(255)] public string Quantity { get; set; }
   public int RecipeId { get; set; }
-  public List<int> AlternateRecipeIds { get; set; }
 }

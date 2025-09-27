@@ -22,6 +22,7 @@ CREATE TABLE allspice_recipes (
         'snack',
         'dessert'
     ),
+    created_from_recipe_id INT,
     creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
@@ -42,19 +43,8 @@ VALUES (
         '67e3273fee37d52171a8018c'
     )
 
+DROP TABLE allspice_recipes
 -- allspice_recipes END
-
--- allspice_altered_recipes BEGIN
-
-CREATE TABLE allspice_altered_recipes (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    recipe_id INT NOT NULL,
-    FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
-)
-
--- allspice_altered_recipes END
 
 -- allspice_ingredients BEGIN
 
@@ -65,10 +55,10 @@ CREATE TABLE allspice_ingredients (
     name VARCHAR(255) NOT NULL,
     quantity VARCHAR(255) NOT NULL,
     recipe_id INT NOT NULL,
-    creator_id VARCHAR(255) NOT NULL,
-    FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE,
-    FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
+    alternate_recipe_ids FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
 )
+
+DROP TABLE allspice_ingredients
 
 -- allspice_ingredients END
 
@@ -83,6 +73,8 @@ CREATE TABLE allspice_favorites (
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
 )
+
+DROP TABLE allspice_favorites
 
 -- allspice_favorites END
 
@@ -99,6 +91,8 @@ CREATE TABLE allspice_recipe_notes (
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
+DROP TABLE allspice_recipe_notes
+
 -- allspice_recipe_notes END
 
 -- allspice_recipe_comments BEGIN
@@ -110,6 +104,8 @@ CREATE TABLE allspice_recipe_comments (
     comment_body VARCHAR(5000) NOT NULL,
     creator_id VARCHAR(255) NOT NULL
 )
+
+DROP TABLE allspice_recipe_comments
 
 -- allspice_recipe_comments END
 
@@ -123,5 +119,7 @@ CREATE TABLE allspice_recipe_comments_likes (
     FOREIGN KEY (comment_id) REFERENCES allspice_recipe_comments (id) ON DELETE CASCADE,
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
+
+DROP TABLE allspice_recipe_comments_likes
 
 -- allspice_recipe_comments_likes END
