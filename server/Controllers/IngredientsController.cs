@@ -36,6 +36,8 @@ public class IngredientsController : ControllerBase
     }
   }
 
+  // NOTE 💣 Delete Ingredient method. Gets user info for authentication.
+
   [Authorize]
   [HttpDelete("{ingredientId}")]
   public async Task<ActionResult<string>> Delete(int ingredientId)
@@ -50,19 +52,4 @@ public class IngredientsController : ControllerBase
       return BadRequest(exception.Message);
     }
   }
-
-  // [Authorize]
-  // [HttpPut("{ingredientId}")]
-  // public async Task<ActionResult<Ingredient>> Edit([FromBody] Ingredient updateIngredientData, int ingredientId)
-  // {
-  //   try
-  //   {
-  //     Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-  //     return Ok(_ingredientsService.Edit(updateIngredientData, ingredientId, userInfo));
-  //   }
-  //   catch (Exception exception)
-  //   {
-  //     return BadRequest(exception.Message);
-  //   }
-  // }
 }

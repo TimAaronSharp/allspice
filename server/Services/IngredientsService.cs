@@ -1,6 +1,3 @@
-
-
-
 namespace allspice.Services;
 
 public class IngredientsService
@@ -32,6 +29,8 @@ public class IngredientsService
     return _repo.Create(ingredientData);
   }
 
+  // NOTE 💣 Delete Ingredient method. Gets ingredient and recipe by their ids, verifies user is the ingredient creator by checking the recipe.CreatorId (ingredients don't have creator info, but ingredients cannot be created on a different user's recipe) (if not, throws exception), and sends ingredientToDelete.Id to repo for deletion from database.
+
   public string Delete(int ingredientId, Profile userInfo)
   {
     Ingredient ingredientToDelete = GetById(ingredientId);
@@ -46,21 +45,7 @@ public class IngredientsService
     return $"Ingredient {ingredientToDelete.Quantity} {ingredientToDelete.Name} has been deleted. You monster.";
   }
 
-  // public Ingredient Edit(Ingredient updateIngredientData, int ingredientId, Profile userInfo)
-  // {
-  //   Ingredient ingredientToUpdate = GetById(ingredientId);
-
-  //   if (ingredientToUpdate.CreatorId != userInfo.Id)
-  //   {
-  //     throw new Exception($"You cannot edit another user's ingredient, {userInfo.Name}.".ToUpper());
-  //   }
-
-  //   ingredientToUpdate.Name = updateIngredientData.Name ?? ingredientToUpdate.Name;
-  //   ingredientToUpdate.Quantity = updateIngredientData.Quantity ?? ingredientToUpdate.Quantity;
-
-  //   _repo.Edit(ingredientToUpdate);
-  //   return ingredientToUpdate;
-  // }
+  // NOTE 🔍🧩 Get ingredient by id method. Sends ingredientId to repo to get ingredient, checks if what was returned was null (if it exists in the database), and then returns the ingredient.
 
   private Ingredient GetById(int ingredientId)
   {
@@ -73,6 +58,9 @@ public class IngredientsService
 
     return ingredient;
   }
+
+  // NOTE 🔍🧩📓 Get ingredients by recipe id. Sends recipeId to repo to retrieve all ingredients for the given recipe.
+
   public List<Ingredient> GetByRecipeId(int recipeId)
   {
     Recipe recipe = GetRecipeById(recipeId);

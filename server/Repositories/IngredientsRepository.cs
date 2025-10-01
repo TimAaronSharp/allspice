@@ -29,6 +29,8 @@ public class IngredientsRepository
     return _db.Query<Ingredient>(sql, ingredientData).SingleOrDefault();
   }
 
+  // NOTE 💣 Delete Ingredient method. Deletes ingredient from database.
+
   public void Delete(int ingredientId)
   {
     string sql = "DELETE FROM allspice_ingredients WHERE id = @ingredientId LIMIT 1;";
@@ -41,22 +43,7 @@ public class IngredientsRepository
     }
   }
 
-  public void Edit(Ingredient ingredientToUpdate)
-  {
-    string sql = @"
-    UPDATE allspice_ingredients
-    SET
-    name = @Name,
-    quantity = @Quantity
-    WHERE id = @id LIMIT 1;";
-
-    int rowsAffected = _db.Execute(sql, ingredientToUpdate);
-
-    if (rowsAffected != 1)
-    {
-      throw new Exception($"{rowsAffected} ingredients were update, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
-    }
-  }
+  // NOTE 🔍🧩 Get ingredient by id method. Queries database for ingredient by it's id.
 
   public Ingredient GetById(int ingredientId)
   {
@@ -64,6 +51,8 @@ public class IngredientsRepository
 
     return _db.Query<Ingredient>(sql, new { ingredientId }).SingleOrDefault();
   }
+
+  // NOTE 🔍🧩📓 Get ingredients by recipe id. Queries database for all ingredients that have the recipeId.
 
   public List<Ingredient> GetByRecipeId(int recipeId)
   {
