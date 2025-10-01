@@ -32,6 +32,20 @@ public class IngredientsService
     return _repo.Create(ingredientData);
   }
 
+  public string Delete(int ingredientId, Profile userInfo)
+  {
+    Ingredient ingredientToDelete = GetById(ingredientId);
+    Recipe recipe = _recipesService.GetById(ingredientToDelete.RecipeId);
+
+    if (recipe.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot delete another user's ingredient, {userInfo.Name}.".ToUpper());
+    }
+
+    _repo.Delete(ingredientToDelete.Id);
+    return $"Ingredient {ingredientToDelete.Quantity} {ingredientToDelete.Name} has been deleted. You monster.";
+  }
+
   // public Ingredient Edit(Ingredient updateIngredientData, int ingredientId, Profile userInfo)
   // {
   //   Ingredient ingredientToUpdate = GetById(ingredientId);
@@ -69,17 +83,4 @@ public class IngredientsService
   {
     return _recipesService.GetById(recipeId);
   }
-
-  // public string Delete(int ingredientId, Profile userInfo)
-  // {
-  //   Ingredient ingredient = GetById(ingredientId);
-
-  //   if (ingredient.CreatorId != userInfo.Id)
-  //   {
-  //     throw new Exception($"You cannot delete another user's ingredient, {userInfo.Name}.".ToUpper());
-  //   }
-
-  //   _repo.Delete(ingredient.Id);
-  //   return $"Ingredient {ingredient.Quantity} {ingredient.Name} has been deleted. You monster.";
-  // }
 }

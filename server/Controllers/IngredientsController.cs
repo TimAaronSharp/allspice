@@ -36,20 +36,20 @@ public class IngredientsController : ControllerBase
     }
   }
 
-  // [Authorize]
-  // [HttpDelete("{ingredientId}")]
-  // public async Task<ActionResult<string>> Delete(int ingredientId)
-  // {
-  //   try
-  //   {
-  //     Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-  //     return Ok(_ingredientsService.Delete(ingredientId, userInfo));
-  //   }
-  //   catch (Exception exception)
-  //   {
-  //     return BadRequest(exception.Message);
-  //   }
-  // }
+  [Authorize]
+  [HttpDelete("{ingredientId}")]
+  public async Task<ActionResult<string>> Delete(int ingredientId)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      return Ok(_ingredientsService.Delete(ingredientId, userInfo));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 
   // [Authorize]
   // [HttpPut("{ingredientId}")]
