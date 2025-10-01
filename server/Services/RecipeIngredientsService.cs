@@ -12,4 +12,9 @@ public class RecipeIngredientsService
   {
     _repo = repo;
   }
+
+  public void Create(Ingredient ingredient)
+  {
+    _repo.Create(ingredient);
+  }
 }
