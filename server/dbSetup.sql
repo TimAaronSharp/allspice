@@ -7,13 +7,13 @@ CREATE TABLE IF NOT EXISTS accounts (
     picture VARCHAR(255) COMMENT 'User Picture'
 ) default charset utf8mb4 COMMENT '';
 
--- allspice_recipes BEGIN
+-- allspice_recipes START
 CREATE TABLE allspice_recipes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    title VARCHAR(255) NOT NULL,
-    instructions VARCHAR(5000) NOT NULL,
+    title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    instructions VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     img VARCHAR(2000) NOT NULL,
     category ENUM(
         'breakfast',
@@ -46,23 +46,31 @@ VALUES (
 DROP TABLE allspice_recipes
 -- allspice_recipes END
 
--- allspice_ingredients BEGIN
+-- allspice_ingredients START
 
 CREATE TABLE allspice_ingredients (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    name VARCHAR(255) NOT NULL,
-    quantity VARCHAR(255) NOT NULL,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    quantity VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     recipe_id INT NOT NULL,
-    alternate_recipe_ids FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
+    UNIQUE KEY uq_ingredient_name_quantity (name, quantity)
 )
+
+INSERT INTO
+    allspice_ingredients (name, quantity, recipe_id)
+VALUES ('Sugar', '1 Cup', 1)
+ON DUPLICATE KEY UPDATE
+    id = LAST_INSERT_ID(id);
+
+SELECT LAST_INSERT_ID();
 
 DROP TABLE allspice_ingredients
 
 -- allspice_ingredients END
 
--- allspice_favorites BEGIN
+-- allspice_favorites START
 
 CREATE TABLE allspice_favorites (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -78,14 +86,14 @@ DROP TABLE allspice_favorites
 
 -- allspice_favorites END
 
--- allspice_recipe_notes BEGIN
+-- allspice_recipe_notes START
 
 CREATE TABLE allspice_recipe_notes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     recipe_id INT NOT NULL,
-    note_body VARCHAR(5000) NOT NULL,
+    body VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
@@ -95,21 +103,22 @@ DROP TABLE allspice_recipe_notes
 
 -- allspice_recipe_notes END
 
--- allspice_recipe_comments BEGIN
+-- allspice_recipe_comments START
 
 CREATE TABLE allspice_recipe_comments (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    comment_body VARCHAR(5000) NOT NULL,
-    creator_id VARCHAR(255) NOT NULL
+    body VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    creator_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
 DROP TABLE allspice_recipe_comments
 
 -- allspice_recipe_comments END
 
--- allspice_recipe_comments_likes BEGIN
+-- allspice_recipe_comments_likes START
 CREATE TABLE allspice_recipe_comments_likes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -123,3 +132,13 @@ CREATE TABLE allspice_recipe_comments_likes (
 DROP TABLE allspice_recipe_comments_likes
 
 -- allspice_recipe_comments_likes END
+
+-- allspice_recipe_tags START
+
+CREATE TABLE allspice_recipe_tags (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    UNIQUE KEY uq_recipe_tags_name (name)
+)

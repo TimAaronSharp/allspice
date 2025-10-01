@@ -6,13 +6,20 @@ namespace allspice.Controllers;
 [Route("api/[controller]")]
 public class IngredientsController : ControllerBase
 {
+  // NOTE 💉 Dependency injections.
+
+  private readonly IngredientsService _ingredientsService;
+  private readonly Auth0Provider _auth0Provider;
+
+  // NOTE 🏗️ Class constructor.
+
   public IngredientsController(IngredientsService ingredientsService, Auth0Provider auth0Provider)
   {
     _ingredientsService = ingredientsService;
     _auth0Provider = auth0Provider;
   }
-  private readonly IngredientsService _ingredientsService;
-  private readonly Auth0Provider _auth0Provider;
+
+  // NOTE 🛠️ Create ingredient method. Gets user info for authentication in service.
 
   [Authorize]
   [HttpPost]
@@ -21,7 +28,6 @@ public class IngredientsController : ControllerBase
     try
     {
       Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      ingredientData.CreatorId = userInfo.Id;
       return Ok(_ingredientsService.Create(ingredientData, userInfo));
     }
     catch (Exception exception)
@@ -30,33 +36,33 @@ public class IngredientsController : ControllerBase
     }
   }
 
-  [Authorize]
-  [HttpDelete("{ingredientId}")]
-  public async Task<ActionResult<string>> Delete(int ingredientId)
-  {
-    try
-    {
-      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      return Ok(_ingredientsService.Delete(ingredientId, userInfo));
-    }
-    catch (Exception exception)
-    {
-      return BadRequest(exception.Message);
-    }
-  }
+  // [Authorize]
+  // [HttpDelete("{ingredientId}")]
+  // public async Task<ActionResult<string>> Delete(int ingredientId)
+  // {
+  //   try
+  //   {
+  //     Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+  //     return Ok(_ingredientsService.Delete(ingredientId, userInfo));
+  //   }
+  //   catch (Exception exception)
+  //   {
+  //     return BadRequest(exception.Message);
+  //   }
+  // }
 
-  [Authorize]
-  [HttpPut("{ingredientId}")]
-  public async Task<ActionResult<Ingredient>> Edit([FromBody] Ingredient updateIngredientData, int ingredientId)
-  {
-    try
-    {
-      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      return Ok(_ingredientsService.Edit(updateIngredientData, ingredientId, userInfo));
-    }
-    catch (Exception exception)
-    {
-      return BadRequest(exception.Message);
-    }
-  }
+  // [Authorize]
+  // [HttpPut("{ingredientId}")]
+  // public async Task<ActionResult<Ingredient>> Edit([FromBody] Ingredient updateIngredientData, int ingredientId)
+  // {
+  //   try
+  //   {
+  //     Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+  //     return Ok(_ingredientsService.Edit(updateIngredientData, ingredientId, userInfo));
+  //   }
+  //   catch (Exception exception)
+  //   {
+  //     return BadRequest(exception.Message);
+  //   }
+  // }
 }
