@@ -54,20 +54,26 @@ public class IngredientsRepository
 
   // NOTE 🔍🧩📓 Get ingredients by recipe id. Queries database for all ingredients that have the recipeId.
 
-  public List<Ingredient> GetByRecipeId(int recipeId)
+  public List<Ingredient> GetByRecipeId(List<int> ingredientIds)
   {
-    string sql = @"
-    SELECT
-    allspice_ingredients.*,
-    allspice_recipes.*
-    FROM allspice_ingredients
-    INNER JOIN allspice_recipes ON allspice_recipes.id = allspice_ingredients.recipe_id
-    WHERE allspice_ingredients.recipe_id = @recipeId;";
-
-    return _db.Query(sql, (Ingredient ingredient, Recipe recipe) =>
+    // NOTE Shouldn't ever happen organically, but just in case.
+    if (ingredientIds == null || ingredientIds.Count == 0)
     {
-      ingredient.RecipeId = recipe.Id;
-      return ingredient;
-    }, new { recipeId }).ToList();
+      return new List<Ingredient>();
+    }
+
+    string sql = @"
+    SELECT *
+    FROM allspice_ingredients 
+    WHERE allspice_ingredients.id IN @ingredientIds;";
+
+    return _db.Query<Ingredient>(sql, new { ingredientIds }).ToList();
   }
 }
+
+// SELECT
+//     allspice_ingredients.*,
+//     allspice_recipes.*
+//     FROM allspice_ingredients
+//     INNER JOIN allspice_recipes ON allspice_recipes.id = allspice_ingredients.recipe_id
+//     WHERE allspice_ingredients.recipe_id = @recipeId;

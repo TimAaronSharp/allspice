@@ -64,12 +64,13 @@ public class IngredientsService
     return ingredient;
   }
 
-  // NOTE 🔍🧩📓 Get ingredients by recipe id. Sends recipeId to repo to retrieve all ingredients for the given recipe.
+  // NOTE 🔍🧩📓 Get ingredients by recipe id. Receives list of ingredient ids from RecipeIngredients and sends them to repo to query for those ingredients.
 
   public List<Ingredient> GetByRecipeId(int recipeId)
   {
-    Recipe recipe = GetRecipeById(recipeId);
-    return _repo.GetByRecipeId(recipe.Id);
+    List<int> ingredientIds = _recipeIngredientsService.GetIngredientIdsByRecipeId(recipeId);
+
+    return _repo.GetByRecipeId(ingredientIds);
   }
 
   private Recipe GetRecipeById(int recipeId)
