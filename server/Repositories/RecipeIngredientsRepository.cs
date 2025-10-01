@@ -33,6 +33,20 @@ public class RecipeIngredientsRepository
     }
   }
 
+  // NOTE 💣 Delete RecipeIngredient method. Finds the RecipeIngredient that matches the recipeId and ingredientId and deletes from the database. This is only used for if a user is changing an ingredient in their recipe.
+
+  public void Delete(int recipeId, int ingredientId)
+  {
+    string sql = "DELETE from allspice_recipe_ingredients WHERE allspice_recipe_ingredients.recipe_id = @recipeId AND allspice_recipe_ingredients.ingredient_id = @ingredientId;";
+
+    int rowsAffected = _db.Execute(sql, new { recipeId, ingredientId });
+
+    if (rowsAffected != 1)
+    {
+      throw new Exception($"{rowsAffected} RecipeIngredients were deleted, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg");
+    }
+  }
+
   // NOTE 🧺🔍🧩📓 Get RecipeIngredients by recipe id. Only SELECTS the ingredient_ids that match the recipeId and returns them to be sent to the IngredientsService/Repository to query for those ingredients.
 
   public List<int> GetIngredientIdsByRecipeId(int recipeId)

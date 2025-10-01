@@ -22,6 +22,14 @@ public class RecipeIngredientsService
     _repo.Create(ingredient);
   }
 
+  // NOTE 💣 Delete RecipeIngredient method. This is only used for if a user is changing an ingredient in their recipe. The RecipeIngredient will be deleted and another will be created with the new ingredient (through the respective methods). RecipeIngredients are cascade deleted when a the recipe or ingredient(shouldn't be actively deleting ingredients with how I'm setting it up, though) is deleted .
+
+  public string Delete(int recipeId, int ingredientId)
+  {
+    _repo.Delete(recipeId, ingredientId);
+    return $"RecipeIngredient for recipe id: {recipeId}, ingredient id:{ingredientId} has been deleted. You monster.";
+  }
+
   // NOTE 🧺🔍🧩📓 Get RecipeIngredients by recipe id. Will return a list of ingredient ids that will be sent to IngredientsService to get all ingredients for the recipe. 
 
   public List<int> GetIngredientIdsByRecipeId(int recipeId)
