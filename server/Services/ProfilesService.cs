@@ -12,4 +12,17 @@ public class ProfilesService
   {
     _repo = repo;
   }
+
+  // NOTE 🔍🧑‍🦲 Get profile by id method. Sends the profile id to ProfilesRepository to retrieve profile from database.
+
+  public Profile GetById(string profileId)
+  {
+    Profile profile = _repo.GetById(profileId);
+
+    if (profile == null)
+    {
+      throw new Exception($"Invalid profile id: {profileId}");
+    }
+    return profile;
+  }
 }

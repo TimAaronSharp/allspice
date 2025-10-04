@@ -17,4 +17,20 @@ public class ProfilesController : ControllerBase
     _profilesService = profilesService;
     _auth0Provider = auth0Provider;
   }
+
+  // NOTE 🔍🧑‍🦲 Get profile by id method. Sends the profile id to ProfilesService.
+
+  [HttpGet("{profileId}")]
+  public ActionResult<Profile> GetById(string profileId)
+  {
+    try
+    {
+      return Ok(_profilesService.GetById(profileId));
+    }
+    catch (Exception exception)
+    {
+
+      return BadRequest(exception.Message);
+    }
+  }
 }
