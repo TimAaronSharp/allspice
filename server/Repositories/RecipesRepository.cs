@@ -96,4 +96,21 @@ public class RecipesRepository
       return recipe;
     }, new { recipeId }).SingleOrDefault();
   }
+
+  public List<Recipe> GetByProfileId(string profileId)
+  {
+    string sql = @"
+    SELECT
+    allspice_recipes.*,
+    accounts.*
+    FROM allspice_recipes
+    INNER JOIN accounts ON accounts.id = allspice_recipes.creator_id
+    WHERE allspice_recipes.creator_id = @profileId;";
+
+    return _db.Query(sql, (Recipe recipe, Profile account) =>
+    {
+      recipe.Creator = account;
+      return recipe;
+    }, new { profileId }).ToList();
+  }
 }

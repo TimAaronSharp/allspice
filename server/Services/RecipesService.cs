@@ -3,12 +3,14 @@ namespace allspice.Services;
 
 public class RecipesService
 {
+  private readonly RecipesRepository _repo;
+  private readonly ProfilesService _profilesService;
 
-  public RecipesService(RecipesRepository repo)
+  public RecipesService(RecipesRepository repo, ProfilesService profilesService)
   {
     _repo = repo;
+    _profilesService = profilesService;
   }
-  private readonly RecipesRepository _repo;
 
   public Recipe Create(Recipe recipeData)
   {
@@ -60,6 +62,12 @@ public class RecipesService
     }
 
     return recipe;
+  }
 
+  public List<Recipe> GetByProfileId(string profileId)
+  {
+    Profile profile = _profilesService.GetById(profileId);
+
+    return _repo.GetByProfileId(profile.Id);
   }
 }
