@@ -28,18 +28,18 @@ async function getAllRecipes() {
 
 <template>
   <section class="container">
-    <div class="row">
-      <button class="col-6 col-md-3 outline-style transparent-btn-style justify-space-between" v-for="recipe in recipes"
-        :key="'recipe ' + recipe.id">
-        <RecipeCard :recipeProp="recipe" />
-      </button>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-5 mt-4">
+      <div v-for="recipe in recipes" :key="'recipe ' + recipe.id">
+        <button class="w-100 p-0 outline-style transparent-btn-style recipe-card">
+          <RecipeCard :recipeProp="recipe" />
+        </button>
+      </div>
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
-.card-spacing {
-  margin-top: 2vh;
-
+.recipe-card {
+  border-radius: 5px;
 }
 </style>

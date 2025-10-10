@@ -27,3 +27,13 @@ main {
 .outline-style {
   outline: 1px solid white;
 }
+
+.profile-thumbnail {
+  height: 30px;
+  border-radius: 50%;
+}
+
+.smoked-glass {
+  background-color: rgba(43, 43, 43, 0.719);
+  backdrop-filter: blur(4px);
+}
