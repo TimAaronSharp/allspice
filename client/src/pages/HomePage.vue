@@ -1,6 +1,7 @@
 <script setup>
 import { AppState } from '@/AppState.js';
 import Example from '@/components/Example.vue';
+import RecipeCard from '@/components/RecipeCard.vue';
 import { recipesService } from '@/services/RecipesService.js';
 import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
@@ -26,7 +27,19 @@ async function getAllRecipes() {
 </script>
 
 <template>
-  <Example />
+  <section class="container">
+    <div class="row">
+      <button class="col-6 col-md-3 outline-style transparent-btn-style justify-space-between" v-for="recipe in recipes"
+        :key="'recipe ' + recipe.id">
+        <RecipeCard :recipeProp="recipe" />
+      </button>
+    </div>
+  </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.card-spacing {
+  margin-top: 2vh;
+
+}
+</style>
