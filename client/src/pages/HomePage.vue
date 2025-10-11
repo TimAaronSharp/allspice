@@ -23,16 +23,13 @@ async function getAllRecipes() {
     logger.error("Could not get all recipes.".toUpperCase(), error)
   }
 }
-
 </script>
 
 <template>
-  <section class="container">
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-5 mt-4">
+  <section class="container-fluid">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-5 mt-4 px-5">
       <div v-for="recipe in recipes" :key="'recipe ' + recipe.id">
-        <button class="w-100 p-0 outline-style transparent-btn-style recipe-card">
-          <RecipeCard :recipeProp="recipe" />
-        </button>
+        <RecipeCard :recipeProp="recipe" />
       </div>
     </div>
   </section>
@@ -41,5 +38,6 @@ async function getAllRecipes() {
 <style scoped lang="scss">
 .recipe-card {
   border-radius: 5px;
+  height: 30vh;
 }
 </style>

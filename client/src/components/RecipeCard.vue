@@ -10,13 +10,17 @@ const props = defineProps({
 
 
 <template>
-  <div class="d-flex flex-column justify-content-between position-relative">
-    <img :src="recipeProp.img" alt="" class="img-fluid recipe-img">
-    <div class="position-absolute h-100 w-100 d-flex flex-column justify-content-between">
-      <div class="smoked-glass smoked-glass-top">
-        <h2>{{ recipeProp?.title }}</h2>
+  <div class="d-flex flex-column justify-content-between">
+    <RouterLink :to="{ name: 'Recipe Page', params: { recipeId: recipeProp?.id } }">
+      <img :src="recipeProp.img" alt="" class="w-100 img-fluid recipe-img">
+    </RouterLink>
+    <div class="h-100 w-100 mt-3 d-flex flex-column justify-content-between">
+      <div>
+        <RouterLink :to="{ name: 'Recipe Page', params: { recipeId: recipeProp?.id } }">
+          <h5>{{ recipeProp?.title }}</h5>
+        </RouterLink>
       </div>
-      <div class="w-100 p-1 d-flex justify-content-between smoked-glass smoked-glass-bottom align-items-center">
+      <div class="w-100 p-1 d-flex justify-content-between align-items-center">
         <p class="m-0">By: {{ recipeProp?.creator.name }}</p> <span><img :src="recipeProp.creator.picture" alt=""
             class="profile-thumbnail"></span>
       </div>
