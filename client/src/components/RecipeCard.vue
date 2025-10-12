@@ -46,4 +46,9 @@ const props = defineProps({
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
 </style>
