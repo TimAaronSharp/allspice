@@ -32,11 +32,27 @@ async function getRecipeById() {
 
 <template>
   <section>
-    <h1>{{ recipe?.title }}</h1>
-    <p>By: {{ recipe?.creator?.name }}</p>
-    <img :src="recipe?.img" alt="">
+    <div class="d-flex">
+      <div>
+        <img :src="recipe?.img" alt="" class="recipe-img">
+      </div>
+      <div class="ms-3">
+        <h1>{{ recipe?.title }}</h1>
+        <p>By: {{ recipe?.creator?.name }}</p>
+        <h4>Instructions:</h4>
+        <p>{{ recipe?.instructions }}</p>
+      </div>
+    </div>
   </section>
 </template>
 
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.recipe-img {
+  object-fit: cover;
+  object-position: center;
+  width: 40vw;
+  aspect-ratio: 1/1;
+  border-radius: 5px;
+}
+</style>
