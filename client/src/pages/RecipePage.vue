@@ -29,16 +29,27 @@ async function getRecipeById() {
 
 </script>
 
+<!-- NOTE Add a description to recipe models/database table. -->
 
 <template>
-  <section>
-    <div class="d-flex">
-      <div>
-        <img :src="recipe?.img" alt="" class="recipe-img">
+  <section class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+
+        <div class="d-flex">
+          <div>
+            <img :src="recipe?.img" alt="" class="recipe-img">
+          </div>
+          <div class="recipe-data">
+            <h1>{{ recipe?.title }}</h1>
+            <p>{{ recipe?.category[0].toUpperCase() + recipe?.category.slice(1) }}</p>
+            <p>By: {{ recipe?.creator?.name }}</p>
+            <!-- NOTE Recipe description here? -->
+          </div>
+        </div>
       </div>
-      <div class="ms-3">
-        <h1>{{ recipe?.title }}</h1>
-        <p>By: {{ recipe?.creator?.name }}</p>
+      <div>
+        <hr>
         <h4>Instructions:</h4>
         <p>{{ recipe?.instructions }}</p>
       </div>
@@ -54,5 +65,9 @@ async function getRecipeById() {
   width: 40vw;
   aspect-ratio: 1/1;
   border-radius: 5px;
+}
+
+.recipe-data {
+  margin-left: 10vw;
 }
 </style>
