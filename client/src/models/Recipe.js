@@ -10,6 +10,7 @@ export class Recipe extends DatabaseItem{
    * @property {Date} updatedAt
    * @property {string} title
    * @property {string} instructions
+   * @property {string} img
    * @property {string} category
    * @property {number} createdFromRecipeId
    * @property {string} creatorId
@@ -20,6 +21,7 @@ export class Recipe extends DatabaseItem{
     super(data)
     this.title = data.title
     this.instructions = data.instructions
+    this.img = data.img
     this.category = data.category
     this.createdFromRecipeId = data.createdFromRecipeId
     this.creatorId = data.creatorId

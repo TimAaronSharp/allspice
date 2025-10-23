@@ -5,6 +5,10 @@ export const AppState = reactive({
   /**@type {import('@bcwdev/auth0provider-client').Identity} */
   identity: null,
   /** @type {import('./models/Account.js').Account} user info from the database*/
-  account: null
+  account: null,
+  /** @type {import('./models/Recipe.js').Recipe[]} recipes from the database*/
+  recipes:[],
+  /** @type {import('./models/Recipe.js').Recipe} recipe from the database*/
+  activeRecipe:null
 })
 
