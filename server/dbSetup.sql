@@ -22,6 +22,7 @@ CREATE TABLE allspice_recipes (
         'snack',
         'dessert'
     ),
+    description VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     created_from_recipe_id INT,
     creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
@@ -91,6 +92,7 @@ CREATE TABLE allspice_recipe_ingredients (
     FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE
 )
 
+DROP TABLE allspice_recipe_ingredients;
 -- allspice_recipe_ingredients END
 
 -- allspice_favorites START
@@ -165,3 +167,5 @@ CREATE TABLE allspice_recipe_tags (
     name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     UNIQUE KEY uq_recipe_tags_name (name)
 )
+
+DROP TABLE allspice_recipe_tags;

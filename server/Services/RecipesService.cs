@@ -41,6 +41,7 @@ public class RecipesService
     recipeToUpdate.Title = updateRecipeData.Title ?? recipeToUpdate.Title;
     recipeToUpdate.Instructions = updateRecipeData.Instructions ?? recipeToUpdate.Instructions;
     recipeToUpdate.Img = updateRecipeData.Img ?? recipeToUpdate.Img;
+    recipeToUpdate.Description = updateRecipeData.Description ?? recipeToUpdate.Description;
     recipeToUpdate.Category = updateRecipeData.Category ?? recipeToUpdate.Category;
 
     _repo.Edit(recipeToUpdate);

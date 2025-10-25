@@ -53,6 +53,7 @@ public class RecipesRepository
     title = @Title,
     instructions = @Instructions,
     img = @Img,
+    description = @Description,
     category = @Category
     WHERE id = @id LIMIT 1;";
 
