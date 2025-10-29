@@ -21,7 +21,8 @@ public class RecipeIngredientsRepository
   {
     string sql = @"
     INSERT INTO allspice_recipe_ingredients (recipe_id, ingredient_id)
-    VALUES (@RecipeId, @Id);
+    VALUES (@RecipeId, @Id)
+    ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
     
     SELECT * FROM allspice_recipe_ingredients WHERE allspice_recipe_ingredients.id = LAST_INSERT_ID();";
 

@@ -2,10 +2,10 @@ import { AppState } from "@/AppState.js";
 import { logger } from "@/utils/Logger.js";
 import { api } from "./AxiosService.js";
 import { Recipe } from "@/models/Recipe.js";
+import { ingredientsService } from "./IngredientsService.js";
 
 
-class RecipesService{  
-
+class RecipesService{
   // NOTE 🧺 Get all keeps request to the server
   async getAll(){
     AppState.recipes = []
@@ -22,6 +22,12 @@ class RecipesService{
     this.makeRecipes(res.data)
     logger.log("AppState.activeRecipe is now ", AppState.activeRecipe)
   }
+
+  async getIngredientsByRecipeId(recipeId) {
+    const res = await api.get(`api/recipes/${recipeId}/ingredients`)
+    logger.log("getIngredientsByRecipeId() returned ", res.data)
+    ingredientsService.makeIngredients(res.data)
+  }  
 
   // NOTE 🏭 Function to take recipe data and create Recipe class objects from it. Checks if data is an array (maps array to create multiple Recipes) or single (creates new single Recipe).
   makeRecipes(recipes){

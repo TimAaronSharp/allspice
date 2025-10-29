@@ -92,6 +92,9 @@ CREATE TABLE allspice_recipe_ingredients (
     FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE
 )
 
+ALTER TABLE allspice_recipe_ingredients
+ADD UNIQUE KEY uq_recipe_ingredient_ids (recipe_id, ingredient_id)
+
 DROP TABLE allspice_recipe_ingredients;
 -- allspice_recipe_ingredients END
 
