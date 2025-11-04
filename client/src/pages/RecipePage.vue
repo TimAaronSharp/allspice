@@ -2,7 +2,6 @@
 import { AppState } from '@/AppState.js';
 import { Recipe } from '@/models/Recipe.js';
 import { ingredientsService } from '@/services/IngredientsService.js';
-import { recipeIngredientsService } from '@/services/RecipeIngredientsService.js';
 import { recipesService } from '@/services/RecipesService.js';
 import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
