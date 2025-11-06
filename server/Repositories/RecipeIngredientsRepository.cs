@@ -17,22 +17,22 @@ public class RecipeIngredientsRepository
 
   public int CheckForIngredientId(int ingredientId)
   {
-    string sql = "SELECT * FROM allspice_recipe_ingredients WHERE allspice_recipe_ingredients.ingredient_id = @ingredientId;";
+    string sql = "SELECT * FROM allspice_recipe_ingredient_links WHERE allspice_recipe_ingredient_links.ingredient_id = @ingredientId;";
 
     return _db.Execute(sql, new { ingredientId });
 
   }
 
-  // NOTE 🛠️ Create RecipeIngredient method. Creates an entry in the allspice_recipe_ingredients table that is the relationship between the recipe and ingredient. Having this join table allows the ingredients to be re-used between different recipes instead of duplication (say if 2 different recipes call for 'sugar' '1 cup' it won't duplicate that ingredient. It will instead create a relationship between the recipe and the already existing ingredient).
+  // NOTE 🛠️ Create RecipeIngredient method. Creates an entry in the allspice_recipe_ingredient_links table that is the relationship between the recipe and ingredient. Having this join table allows the ingredients to be re-used between different recipes instead of duplication (say if 2 different recipes call for 'sugar' '1 cup' it won't duplicate that ingredient. It will instead create a relationship between the recipe and the already existing ingredient).
 
   public void Create(Ingredient ingredient)
   {
     string sql = @"
-    INSERT INTO allspice_recipe_ingredients (recipe_id, ingredient_id)
+    INSERT INTO allspice_recipe_ingredient_links (recipe_id, ingredient_id)
     VALUES (@RecipeId, @Id)
     ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
     
-    SELECT * FROM allspice_recipe_ingredients WHERE allspice_recipe_ingredients.id = LAST_INSERT_ID();";
+    SELECT * FROM allspice_recipe_ingredient_links WHERE allspice_recipe_ingredient_links.id = LAST_INSERT_ID();";
 
     int rowsAffected = _db.Execute(sql, ingredient);
 
@@ -46,7 +46,7 @@ public class RecipeIngredientsRepository
 
   public void Delete(int recipeId, int ingredientId)
   {
-    string sql = "DELETE from allspice_recipe_ingredients WHERE allspice_recipe_ingredients.recipe_id = @recipeId AND allspice_recipe_ingredients.ingredient_id = @ingredientId;";
+    string sql = "DELETE from allspice_recipe_ingredient_links WHERE allspice_recipe_ingredient_links.recipe_id = @recipeId AND allspice_recipe_ingredient_links.ingredient_id = @ingredientId;";
 
     int rowsAffected = _db.Execute(sql, new { recipeId, ingredientId });
 
@@ -61,8 +61,8 @@ public class RecipeIngredientsRepository
   public List<int> GetIngredientIdsByRecipeId(int recipeId)
   {
     string sql = @"
-    SELECT ingredient_id FROM allspice_recipe_ingredients
-    WHERE allspice_recipe_ingredients.recipe_id = @recipeId;";
+    SELECT ingredient_id FROM allspice_recipe_ingredient_links
+    WHERE allspice_recipe_ingredient_links.recipe_id = @recipeId;";
 
     return _db.Query<int>(sql, new { recipeId }).ToList();
   }

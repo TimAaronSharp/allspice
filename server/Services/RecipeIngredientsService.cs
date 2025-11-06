@@ -25,7 +25,7 @@ public class RecipeIngredientsService
     }
   }
 
-  // NOTE 🛠️ Create RecipeIngredient method. Receives the ingredient that was just created in the allspice_ingredients table and sends it to the RecipeIngredientsRepository to create the entry in the allspice_recipe_ingredients table (which is just a linking table that links recipes and ingredients by their ids). This allows multiple recipes can use the same ingredient from the ingredients table (if 2 recipes happen to write it the exact way. This saves storage space in the database by referencing ingredients that already exist instead of creating duplicates of the same recipe).
+  // NOTE 🛠️ Create RecipeIngredient method. Receives the ingredient that was just created in the allspice_ingredients table and sends it to the RecipeIngredientsRepository to create the entry in the allspice_recipe_ingredient_links table (which is just a linking table that links recipes and ingredients by their ids). This allows multiple recipes can use the same ingredient from the ingredients table (if 2 recipes happen to write it the exact way. This saves storage space in the database by referencing ingredients that already exist instead of creating duplicates of the same recipe).
 
   public void Create(Ingredient ingredient)
   {

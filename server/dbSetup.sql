@@ -71,7 +71,7 @@ DROP TABLE allspice_ingredients
 
 -- allspice_ingredients END
 
--- allspice_recipe_ingredients START
+-- allspice_recipe_ingredient_links START
 -- This is a join table that only will have an entry for every ingredient that a recipe has. Example: Recipe id:1 has 5 ingredients, so there will be 5 entries in this table for that recipe/ingredients. This table will be used to match ingredients to recipes. This allows the entries in the ingredients table to not need to be duplicated if more than one recipe uses that same ingredient ('sugar', '1 cup'), saving space and reducing redundancy.
 
 -- id | recipe_di | ingredient_id
@@ -82,7 +82,7 @@ DROP TABLE allspice_ingredients
 --  4   1            4
 --  5   1            5
 
-CREATE TABLE allspice_recipe_ingredients (
+CREATE TABLE allspice_recipe_ingredient_links (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -92,11 +92,11 @@ CREATE TABLE allspice_recipe_ingredients (
     FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE
 )
 
-ALTER TABLE allspice_recipe_ingredients
+ALTER TABLE allspice_recipe_ingredient_links
 ADD UNIQUE KEY uq_recipe_ingredient_ids (recipe_id, ingredient_id)
 
-DROP TABLE allspice_recipe_ingredients;
--- allspice_recipe_ingredients END
+DROP TABLE allspice_recipe_ingredient_links;
+-- allspice_recipe_ingredient_links END
 
 -- allspice_favorites START
 
