@@ -138,7 +138,9 @@ CREATE TABLE allspice_recipe_comments (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     body VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    recipe_id INT NOT NULL,
     creator_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 

@@ -15,6 +15,14 @@ public class RecipeIngredientsRepository
     _db = db;
   }
 
+  public int CheckForIngredientId(int ingredientId)
+  {
+    string sql = "SELECT * FROM allspice_recipe_ingredients WHERE allspice_recipe_ingredients.ingredient_id = @ingredientId;";
+
+    return _db.Execute(sql, new { ingredientId });
+
+  }
+
   // NOTE 🛠️ Create RecipeIngredient method. Creates an entry in the allspice_recipe_ingredients table that is the relationship between the recipe and ingredient. Having this join table allows the ingredients to be re-used between different recipes instead of duplication (say if 2 different recipes call for 'sugar' '1 cup' it won't duplicate that ingredient. It will instead create a relationship between the recipe and the already existing ingredient).
 
   public void Create(Ingredient ingredient)
@@ -58,5 +66,4 @@ public class RecipeIngredientsRepository
 
     return _db.Query<int>(sql, new { recipeId }).ToList();
   }
-
 }
