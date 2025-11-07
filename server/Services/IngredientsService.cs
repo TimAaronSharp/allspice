@@ -11,18 +11,17 @@ public class IngredientsService
 
   // NOTE 🏗️ Class constructor.
 
-  public IngredientsService(IngredientsRepository repo, RecipesService recipesService, RecipeIngredientsService recipeIngredientsService)
+  public IngredientsService(IngredientsRepository repo, RecipesService recipesService)
   {
     _repo = repo;
     _recipesService = recipesService;
-    _recipeIngredientsService = recipeIngredientsService;
   }
 
   // NOTE 🛠️ Create ingredient method. Gets recipe from recipe id to check if user is recipe creator to prevent users from creating an ingredient on another user's recipe. If true, passes ingredientData to repo.
 
-  public Ingredient Create(Ingredient ingredientData, Profile userInfo)
+  public Ingredient Create(Ingredient ingredientData, int recipeId, Profile userInfo)
   {
-    Recipe recipe = _recipesService.GetById(ingredientData.RecipeId);
+    Recipe recipe = _recipesService.GetById(recipeId);
 
     if (recipe.CreatorId != userInfo.Id)
     {
@@ -30,21 +29,27 @@ public class IngredientsService
     }
 
     Ingredient ingredientToCreate = _repo.Create(ingredientData);
-    _recipeIngredientsService.Create(ingredientToCreate);
+
+    RecipeIngredientLink recipeIngredientLinkData = new RecipeIngredientLink(recipeId, ingredientToCreate.Id, userInfo.Id);
+    // recipeIngredientLinkData.RecipeId = recipeId;
+    // recipeIngredientLinkData.IngredientId = ingredientToCreate.Id;
+    // recipeIngredientLinkData.CreatorId = userInfo.Id;
+
+    _recipeIngredientsService.Create(recipeIngredientLinkData);
     return ingredientToCreate;
   }
 
-  // NOTE 💣 Delete Ingredient method. Gets ingredient and recipe by their ids, verifies user is the ingredient creator by checking the recipe.CreatorId (ingredients don't have creator info, but ingredients cannot be created on a different user's recipe) (if not, throws exception), and sends ingredientToDelete.Id to repo for deletion from database.
+  // NOTE 💣 Delete Ingredient method. Gets ingredient by its id and sends ingredientToDelete.Id to repo for deletion from database. Does not verify creator because ingredients are only deleted from database if there are no recipeIngredientLinks associated with the ingredient id. Creator verification for recipeIngredientLink does occur. (Will research if there could be a verification check that could work with this/if it would be necessary.)
 
-  public string Delete(int ingredientId, Profile userInfo)
+  public string Delete(int ingredientId)
   {
     Ingredient ingredientToDelete = GetById(ingredientId);
-    Recipe recipe = _recipesService.GetById(ingredientToDelete.RecipeId);
+    // Recipe recipe = _recipesService.GetById(ingredientToDelete.OriginRecipeId);
 
-    if (recipe.CreatorId != userInfo.Id)
-    {
-      throw new Exception($"You cannot delete another user's ingredient, {userInfo.Name}.".ToUpper());
-    }
+    // if (recipe.CreatorId != userInfo.Id)
+    // {
+    //   throw new Exception($"You cannot delete another user's ingredient, {userInfo.Name}.".ToUpper());
+    // }
 
     _repo.Delete(ingredientToDelete.Id);
     return $"Ingredient {ingredientToDelete.Quantity} {ingredientToDelete.Name} has been deleted. You monster.";

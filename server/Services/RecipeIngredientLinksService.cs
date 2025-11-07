@@ -21,24 +21,43 @@ public class RecipeIngredientsService
     int rowsReturned = _repo.CheckForIngredientId(ingredientId);
     if (rowsReturned == 0)
     {
-      // _ingredientsService.Delete(ingredientId);
+      _ingredientsService.Delete(ingredientId);
     }
   }
 
   // NOTE 🛠️ Create RecipeIngredient method. Receives the ingredient that was just created in the allspice_ingredients table and sends it to the RecipeIngredientsRepository to create the entry in the allspice_recipe_ingredient_links table (which is just a linking table that links recipes and ingredients by their ids). This allows multiple recipes can use the same ingredient from the ingredients table (if 2 recipes happen to write it the exact way. This saves storage space in the database by referencing ingredients that already exist instead of creating duplicates of the same recipe).
 
-  public void Create(Ingredient ingredient)
+  public RecipeIngredientLink Create(RecipeIngredientLink recipeIngredientLinkData)
   {
-    _repo.Create(ingredient);
+    return _repo.Create(recipeIngredientLinkData);
   }
 
   // NOTE 💣 Delete RecipeIngredient method. This is used if a user deletes a recipeIngredient from their recipe, or if they are going to edit a recipeIngredient (behind the scenes the editing will just be deleting and creating a new recipeIngredient).
 
-  public string Delete(int recipeId, int ingredientId)
+  public string Delete(int recipeIngredientLinkId, Profile userInfo)
   {
-    _repo.Delete(recipeId, ingredientId);
-    CheckForIngredientId(ingredientId);
-    return $"RecipeIngredient for recipe id: {recipeId}, ingredient id:{ingredientId} has been deleted. You monster.";
+    RecipeIngredientLink recipeIngredientLink = GetById(recipeIngredientLinkId);
+
+    if (recipeIngredientLink.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot delete another user's recipeIngredientLink, {userInfo.Name}.".ToUpper());
+    }
+
+    _repo.Delete(recipeIngredientLink.Id);
+    CheckForIngredientId(recipeIngredientLink.IngredientId);
+    return $"RecipeIngredient id: {recipeIngredientLink.Id} has been deleted. You monster.";
+  }
+
+  public RecipeIngredientLink GetById(int recipeIngredientLinkId)
+  {
+    RecipeIngredientLink recipeIngredientLink = _repo.GetById(recipeIngredientLinkId);
+
+    if (recipeIngredientLink == null)
+    {
+      throw new Exception($"Invalid recipeIngredientLink id: {recipeIngredientLinkId}");
+    }
+
+    return recipeIngredientLink;
   }
 
   // NOTE 🧺🔍🧩📓 Get RecipeIngredients by recipe id. Will return a list of ingredient ids that will be sent to IngredientsService to get all ingredients for the recipe. 

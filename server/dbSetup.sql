@@ -93,7 +93,7 @@ CREATE TABLE allspice_recipe_ingredient_links (
 )
 
 ALTER TABLE allspice_recipe_ingredient_links
-ADD UNIQUE KEY uq_recipe_ingredient_ids (recipe_id, ingredient_id)
+ADD creator_id VARCHAR(255) NOT NULL
 
 DROP TABLE allspice_recipe_ingredient_links;
 -- allspice_recipe_ingredient_links END
