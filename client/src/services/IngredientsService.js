@@ -2,6 +2,7 @@ import { Ingredient } from "@/models/Ingredient.js"
 import { api } from "./AxiosService.js"
 import { AppState } from "@/AppState.js"
 import { logger } from "@/utils/Logger.js"
+import { Pop } from "@/utils/Pop.js"
 /** @typedef {import('@/models/Ingredient.js').IngredientData} IngredientData */
 
 
@@ -11,7 +12,13 @@ class IngredientsService {
     const res = await api.post('api/ingredients', ingredientData)
     logger.log("IngredientsService.create() returned ", + res.data)
     const createdIngredient = new Ingredient(res.data)
-    AppState.ingredients.push(createdIngredient)
+    AppState.ingredients.forEach((ingredient) =>{
+      if (ingredient.id == createdIngredient.id) {
+        Pop.toast("Ingredient already exists in recipe.")
+        return
+      }
+      AppState.ingredients.push(createdIngredient)
+    })
     return res.data
   }
   // Playing around with @param/@returns. This was because originally makeIngredients() would behave differently based on if it was an array or not (like RecipesService.makeRecipes()), but upon further pondering I don't believe I actually will ever need an AppState.activeIngredient after all. Commenting for now in case I realize later on that I do.
