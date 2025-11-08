@@ -9,9 +9,10 @@ class IngredientsService {
   // NOTE 🛠️ Create ingredient request to the server.
   async create(ingredientData) {
     const res = await api.post('api/ingredients', ingredientData)
-    logger.log("create() returned ", + res.data)
+    logger.log("IngredientsService.create() returned ", + res.data)
     const createdIngredient = new Ingredient(res.data)
     AppState.ingredients.push(createdIngredient)
+    return res.data
   }
   // Playing around with @param/@returns. This was because originally makeIngredients() would behave differently based on if it was an array or not (like RecipesService.makeRecipes()), but upon further pondering I don't believe I actually will ever need an AppState.activeIngredient after all. Commenting for now in case I realize later on that I do.
   /**

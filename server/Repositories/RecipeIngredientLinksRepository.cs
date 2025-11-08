@@ -2,7 +2,7 @@ using Microsoft.VisualBasic;
 
 namespace allspice.Repositories;
 
-public class RecipeIngredientsRepository
+public class RecipeIngredientLinksRepository
 {
   // NOTE 💉 Dependency injections.
 
@@ -10,7 +10,7 @@ public class RecipeIngredientsRepository
 
   // NOTE 🏗️ Class constructor.
 
-  public RecipeIngredientsRepository(IDbConnection db)
+  public RecipeIngredientLinksRepository(IDbConnection db)
   {
     _db = db;
   }
@@ -60,12 +60,26 @@ public class RecipeIngredientsRepository
 
   // NOTE 🧺🔍🧩📓 Get RecipeIngredients by recipe id. Only SELECTS the ingredient_ids that match the recipeId and returns them to be sent to the IngredientsService/Repository to query for those ingredients.
 
-  public List<int> GetIngredientIdsByRecipeId(int recipeId)
+  public List<RecipeIngredient> GetRecipeIngredientsByRecipeId(int recipeId)
   {
     string sql = @"
-    SELECT ingredient_id FROM allspice_recipe_ingredient_links
+    SELECT
+    allspice_recipe_ingredient_links.*,
+    allspice_ingredients.*
+    FROM allspice_recipe_ingredient_links
+    INNER JOIN allspice_ingredients ON allspice_ingredients.id = allspice_recipe_ingredient_links.ingredient_id
     WHERE allspice_recipe_ingredient_links.recipe_id = @recipeId;";
 
-    return _db.Query<int>(sql, new { recipeId }).ToList();
+    return _db.Query(sql, (RecipeIngredientLink recipeIngredientLink, RecipeIngredient recipeIngredient) =>
+    {
+      recipeIngredient.RecipeIngredientLinkId = recipeIngredientLink.Id;
+      recipeIngredient.RecipeId = recipeIngredientLink.RecipeId;
+      return recipeIngredient;
+    }, new { recipeId }).ToList();
+
   }
 }
+
+
+// SELECT ingredient_id FROM allspice_recipe_ingredient_links
+//     WHERE allspice_recipe_ingredient_links.recipe_id = @recipeId;

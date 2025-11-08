@@ -20,8 +20,8 @@ public class IngredientsRepository
   public Ingredient Create(Ingredient ingredientData)
   {
     string sql = @"
-    INSERT INTO allspice_ingredients (name, quantity, recipe_id)
-    VALUES (@Name, @quantity, @RecipeId)
+    INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
+    VALUES (@Name, @Quantity, @OriginRecipeId)
     ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
 
     SELECT * FROM allspice_ingredients where id = LAST_INSERT_ID();";

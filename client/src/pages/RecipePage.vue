@@ -2,6 +2,7 @@
 import { AppState } from '@/AppState.js';
 import { Recipe } from '@/models/Recipe.js';
 import { ingredientsService } from '@/services/IngredientsService.js';
+import { recipeIngredientLinksService } from '@/services/RecipeIngredientLinksService.js';
 import { recipesService } from '@/services/RecipesService.js';
 import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
@@ -17,7 +18,7 @@ const router = useRouter()
 const editableIngredientData = ref({
   name: "",
   quantity: "",
-  recipeId: 0
+  originRecipeId: 0
 })
 
 onMounted(() => {
@@ -28,13 +29,18 @@ async function createIngredient() {
   try {
     // debugger
     // NOTE Make it so that if a recipe already has an ingredient that a new recipeIngredient can't be created. Check how you did it in the ingredients table
-    editableIngredientData.value.recipeId = recipe.value?.id
-    await ingredientsService.create(editableIngredientData.value)
+    editableIngredientData.value.originRecipeId = recipe.value?.id
+    const ingredient = await ingredientsService.create(editableIngredientData.value)
+
     editableIngredientData.value = {
       name: "",
       quantity: "",
-      recipeId: 0
+      originRecipeId: 0
     }
+
+    const recipeIngredientLinkData = { recipeId: ingredient.originRecipeId, ingredientId: ingredient.id, creatorId: "" }
+    // debugger
+    await recipeIngredientLinksService.create(recipeIngredientLinkData)
   }
   catch (error) {
     Pop.error(error, `Could not create ingredient: ${editableIngredientData.value.quantity} ${editableIngredientData.value.name}`);
@@ -45,7 +51,7 @@ async function createIngredient() {
 async function getRecipeById() {
   try {
     await recipesService.getById(route.params.recipeId)
-    getIngredientsByRecipeId(route.params.recipeId)
+    getRecipeIngredientsByRecipeId(route.params.recipeId)
   }
   catch (error) {
     Pop.error(error, "Could not get recipe by id");
@@ -53,9 +59,9 @@ async function getRecipeById() {
   }
 }
 
-async function getIngredientsByRecipeId(recipeId) {
+async function getRecipeIngredientsByRecipeId(recipeId) {
   try {
-    await recipesService.getIngredientsByRecipeId(recipeId)
+    await recipesService.getRecipeIngredientsByRecipeId(recipeId)
   }
   catch (error) {
     Pop.error(error, "Could not get ingredients by recipe id.");
@@ -89,6 +95,8 @@ async function getIngredientsByRecipeId(recipeId) {
             <p>{{ recipe?.category[0].toUpperCase() + recipe?.category.slice(1) }}</p>
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->
+
+
             <p v-for="ingredient in ingredients" :key="'ingredient' + ingredient.id">
               {{ ingredient.quantity }} {{ ingredient.name }}
             </p>

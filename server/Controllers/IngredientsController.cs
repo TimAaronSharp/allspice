@@ -23,12 +23,12 @@ public class IngredientsController : ControllerBase
 
   [Authorize]
   [HttpPost]
-  public async Task<ActionResult<Ingredient>> Create([FromBody] Ingredient ingredientData, int recipeId)
+  public async Task<ActionResult<Ingredient>> Create([FromBody] Ingredient ingredientData)
   {
     try
     {
       Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      return Ok(_ingredientsService.Create(ingredientData, recipeId, userInfo));
+      return Ok(_ingredientsService.Create(ingredientData, userInfo));
     }
     catch (Exception exception)
     {

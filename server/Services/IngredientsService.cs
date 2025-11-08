@@ -7,7 +7,6 @@ public class IngredientsService
 
   private readonly IngredientsRepository _repo;
   private readonly RecipesService _recipesService;
-  private readonly RecipeIngredientsService _recipeIngredientsService;
 
   // NOTE 🏗️ Class constructor.
 
@@ -19,9 +18,9 @@ public class IngredientsService
 
   // NOTE 🛠️ Create ingredient method. Gets recipe from recipe id to check if user is recipe creator to prevent users from creating an ingredient on another user's recipe. If true, passes ingredientData to repo.
 
-  public Ingredient Create(Ingredient ingredientData, int recipeId, Profile userInfo)
+  public Ingredient Create(Ingredient ingredientData, Profile userInfo)
   {
-    Recipe recipe = _recipesService.GetById(recipeId);
+    Recipe recipe = _recipesService.GetById(ingredientData.OriginRecipeId);
 
     if (recipe.CreatorId != userInfo.Id)
     {
@@ -30,12 +29,6 @@ public class IngredientsService
 
     Ingredient ingredientToCreate = _repo.Create(ingredientData);
 
-    RecipeIngredientLink recipeIngredientLinkData = new RecipeIngredientLink(recipeId, ingredientToCreate.Id, userInfo.Id);
-    // recipeIngredientLinkData.RecipeId = recipeId;
-    // recipeIngredientLinkData.IngredientId = ingredientToCreate.Id;
-    // recipeIngredientLinkData.CreatorId = userInfo.Id;
-
-    _recipeIngredientsService.Create(recipeIngredientLinkData);
     return ingredientToCreate;
   }
 
@@ -67,19 +60,5 @@ public class IngredientsService
     }
 
     return ingredient;
-  }
-
-  // NOTE 🔍🧩📓 Get ingredients by recipe id. Receives list of ingredient ids from RecipeIngredients and sends them to repo to query for those ingredients.
-
-  public List<Ingredient> GetByRecipeId(int recipeId)
-  {
-    List<int> ingredientIds = _recipeIngredientsService.GetIngredientIdsByRecipeId(recipeId);
-
-    return _repo.GetByRecipeId(ingredientIds);
-  }
-
-  private Recipe GetRecipeById(int recipeId)
-  {
-    return _recipesService.GetById(recipeId);
   }
 }

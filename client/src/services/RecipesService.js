@@ -25,7 +25,7 @@ class RecipesService{
   }
 
   // NOTE 🧺🔍 Get ingredients by recipe id request to the server.
-  async getIngredientsByRecipeId(recipeId) {
+  async getRecipeIngredientsByRecipeId(recipeId) {
     const res = await api.get(`api/recipes/${recipeId}/ingredients`)
     logger.log("recipesService.getIngredientsByRecipeId() returned ", res.data)
     ingredientsService.makeIngredients(res.data)

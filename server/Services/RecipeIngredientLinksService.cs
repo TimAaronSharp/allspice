@@ -1,21 +1,21 @@
 namespace allspice.Services;
 
-public class RecipeIngredientsService
+public class RecipeIngredientLinksService
 {
   // NOTE 💉 Dependency injections.
 
-  private readonly RecipeIngredientsRepository _repo;
+  private readonly RecipeIngredientLinksRepository _repo;
   private readonly IngredientsService _ingredientsService;
 
   // NOTE 🏗️ Class constructor.
 
-  public RecipeIngredientsService(RecipeIngredientsRepository repo, IngredientsService ingredientsService)
+  public RecipeIngredientLinksService(RecipeIngredientLinksRepository repo, IngredientsService ingredientsService)
   {
     _repo = repo;
     _ingredientsService = ingredientsService;
   }
 
-  // NOTE 🔍 Method to check if any recipeIngredients exist that have a given ingredientId. If there is, then nothing happens. If there aren't any, then the ingredient will be deleted from the allspice_ingredients table through the IngredientsService. This is only called from RecipeIngredientsService.Delete().
+  // NOTE 🔍 Method to check if any recipeIngredients exist that have a given ingredientId. If there is, then nothing happens. If there aren't any, then the ingredient will be deleted from the allspice_ingredients table through the IngredientsService. This is only called from RecipeIngredientLinksService.Delete().
   public void CheckForIngredientId(int ingredientId)
   {
     int rowsReturned = _repo.CheckForIngredientId(ingredientId);
@@ -25,7 +25,7 @@ public class RecipeIngredientsService
     }
   }
 
-  // NOTE 🛠️ Create RecipeIngredient method. Receives the ingredient that was just created in the allspice_ingredients table and sends it to the RecipeIngredientsRepository to create the entry in the allspice_recipe_ingredient_links table (which is just a linking table that links recipes and ingredients by their ids). This allows multiple recipes can use the same ingredient from the ingredients table (if 2 recipes happen to write it the exact way. This saves storage space in the database by referencing ingredients that already exist instead of creating duplicates of the same recipe).
+  // NOTE 🛠️ Create RecipeIngredient method. Receives the ingredient that was just created in the allspice_ingredients table and sends it to the RecipeIngredientLinksRepository to create the entry in the allspice_recipe_ingredient_links table (which is just a linking table that links recipes and ingredients by their ids). This allows multiple recipes can use the same ingredient from the ingredients table (if 2 recipes happen to write it the exact way. This saves storage space in the database by referencing ingredients that already exist instead of creating duplicates of the same recipe).
 
   public RecipeIngredientLink Create(RecipeIngredientLink recipeIngredientLinkData)
   {
@@ -62,9 +62,16 @@ public class RecipeIngredientsService
 
   // NOTE 🧺🔍🧩📓 Get RecipeIngredients by recipe id. Will return a list of ingredient ids that will be sent to IngredientsService to get all ingredients for the recipe. 
 
-  public List<int> GetIngredientIdsByRecipeId(int recipeId)
+  public List<RecipeIngredient> GetRecipeIngredientsByRecipeId(int recipeId)
   {
-    return _repo.GetIngredientIdsByRecipeId(recipeId);
+    List<RecipeIngredient> recipeIngredients = _repo.GetRecipeIngredientsByRecipeId(recipeId);
+
+    // NOTE Shouldn't ever happen organically, but just in case.
+    if (recipeIngredients == null || recipeIngredients.Count == 0)
+    {
+      return new List<RecipeIngredient>();
+    }
+    return recipeIngredients;
   }
 
 }

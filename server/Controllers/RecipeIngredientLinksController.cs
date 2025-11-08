@@ -2,32 +2,32 @@ namespace allspice.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RecipeIngredientsController : ControllerBase
+public class RecipeIngredientLinksController : ControllerBase
 {
-  private readonly RecipeIngredientsService _recipeIngredientsService;
+  private readonly RecipeIngredientLinksService _RecipeIngredientLinksService;
   private readonly Auth0Provider _auth0Provider;
 
-  public RecipeIngredientsController(RecipeIngredientsService recipeIngredientsService, Auth0Provider auth0Provider)
+  public RecipeIngredientLinksController(RecipeIngredientLinksService RecipeIngredientLinksService, Auth0Provider auth0Provider)
   {
-    _recipeIngredientsService = recipeIngredientsService;
+    _RecipeIngredientLinksService = RecipeIngredientLinksService;
     _auth0Provider = auth0Provider;
   }
 
-  // [Authorize]
-  // [HttpPost]
-  // public async Task<ActionResult<RecipeIngredientLink>> Create([FromBody] RecipeIngredientLink recipeIngredientLinkData)
-  // {
-  //   try
-  //   {
-  //     Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-  //     recipeIngredientLinkData.CreatorId = userInfo.Id;
-  //     return Ok(_recipeIngredientsService.Create(recipeIngredientLinkData));
-  //   }
-  //   catch (Exception exception)
-  //   {
-  //     return BadRequest(exception.Message);
-  //   }
-  // }
+  [Authorize]
+  [HttpPost]
+  public async Task<ActionResult<RecipeIngredientLink>> Create([FromBody] RecipeIngredientLink recipeIngredientLinkData)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      recipeIngredientLinkData.CreatorId = userInfo.Id;
+      return Ok(_RecipeIngredientLinksService.Create(recipeIngredientLinkData));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 
   [Authorize]
   [HttpDelete("{recipeIngredientLinkId}")]
@@ -36,7 +36,7 @@ public class RecipeIngredientsController : ControllerBase
     try
     {
       Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      return Ok(_recipeIngredientsService.Delete(recipeIngredientLinkId, userInfo));
+      return Ok(_RecipeIngredientLinksService.Delete(recipeIngredientLinkId, userInfo));
     }
     catch (Exception exception)
     {

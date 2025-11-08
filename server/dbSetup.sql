@@ -55,7 +55,7 @@ CREATE TABLE allspice_ingredients (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     quantity VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    recipe_id INT NOT NULL,
+    origin_recipe_id INT NOT NULL,
     UNIQUE KEY uq_ingredient_name_quantity (name, quantity)
 )
 
@@ -88,8 +88,10 @@ CREATE TABLE allspice_recipe_ingredient_links (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     recipe_id INT NOT NULL,
     ingredient_id INT NOT NULL,
+    creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE,
-    FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE
+    FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE,
+    UNIQUE KEY uq_recipe_ingredient_ids (recipe_id, ingredient_id)
 )
 
 ALTER TABLE allspice_recipe_ingredient_links
