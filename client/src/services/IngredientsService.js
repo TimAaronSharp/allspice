@@ -7,18 +7,17 @@ import { Pop } from "@/utils/Pop.js"
 
 
 class IngredientsService {
-  // NOTE 🛠️ Create ingredient request to the server.
+  // NOTE 🛠️ Create ingredient request to the server. After a new Ingredient class object is created with res.data AppState.ingredients is iterated over to see if the ingredient already exists in the array, and if it does it does not push, preventing duplication on the client (duplication already prevented in database).
   async create(ingredientData) {
     const res = await api.post('api/ingredients', ingredientData)
     logger.log("IngredientsService.create() returned ", + res.data)
     const createdIngredient = new Ingredient(res.data)
-    AppState.ingredients.forEach((ingredient) =>{
-      if (ingredient.id == createdIngredient.id) {
-        Pop.toast("Ingredient already exists in recipe.")
-        return
-      }
-      AppState.ingredients.push(createdIngredient)
-    })
+
+    if(AppState.ingredients.find(ingredient => ingredient.id == createdIngredient.id)){
+      Pop.toast("Ingredient already exists in recipe.")
+      return res.data
+    }
+    AppState.ingredients.push(createdIngredient)
     return res.data
   }
   // Playing around with @param/@returns. This was because originally makeIngredients() would behave differently based on if it was an array or not (like RecipesService.makeRecipes()), but upon further pondering I don't believe I actually will ever need an AppState.activeIngredient after all. Commenting for now in case I realize later on that I do.

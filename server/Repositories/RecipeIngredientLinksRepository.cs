@@ -29,12 +29,22 @@ public class RecipeIngredientLinksRepository
   {
     string sql = @"
     INSERT INTO allspice_recipe_ingredient_links (recipe_id, ingredient_id, creator_id)
-    VALUES (@RecipeId, @IngredientId, @CreatorId)
-    ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
+    SELECT @RecipeId, @IngredientId, @CreatorId
+    WHERE NOT EXISTS (
+      SELECT 1 FROM allspice_recipe_ingredient_links
+      WHERE recipe_id = @RecipeId AND ingredient_id = @IngredientId);
     
     SELECT * FROM allspice_recipe_ingredient_links WHERE id = LAST_INSERT_ID();";
 
-    return _db.Query(sql, recipeIngredientLinkData).SingleOrDefault();
+    return _db.Query<RecipeIngredientLink>(sql, recipeIngredientLinkData).SingleOrDefault();
+
+
+    // string sql = @"
+    // INSERT INTO allspice_recipe_ingredient_links (recipe_id, ingredient_id, creator_id)
+    // VALUES (@RecipeId, @IngredientId, @CreatorId)
+    // ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
+
+    // SELECT * FROM allspice_recipe_ingredient_links WHERE id = LAST_INSERT_ID();";
   }
 
   // NOTE 💣 Delete RecipeIngredient method. Finds the RecipeIngredient that matches the recipeId and ingredientId and deletes from the database. This is only used for if a user is changing an ingredient in their recipe.

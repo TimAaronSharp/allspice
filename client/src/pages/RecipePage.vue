@@ -28,7 +28,6 @@ onMounted(() => {
 async function createIngredient() {
   try {
     // debugger
-    // NOTE Make it so that if a recipe already has an ingredient that a new recipeIngredient can't be created. Check how you did it in the ingredients table
     editableIngredientData.value.originRecipeId = recipe.value?.id
     const ingredient = await ingredientsService.create(editableIngredientData.value)
 
