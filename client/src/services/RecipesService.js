@@ -6,6 +6,7 @@ import { ingredientsService } from "./IngredientsService.js";
 
 
 class RecipesService{
+  
   // NOTE 🧺 Get all recipes request to the server.
   async getAll(){
     AppState.recipes = []
@@ -22,6 +23,13 @@ class RecipesService{
     logger.log("recipesService.getById() returned ", res.data)
     this.makeRecipes(res.data)
     logger.log("AppState.activeRecipe is now ", AppState.activeRecipe)
+  }
+
+  // NOTE 🔍🧺 Gets enumerated list of recipe categories from database (allspice_recipes table) to populate category selection in recipe creation.
+  async getCategories() {
+    const res = await api.get('api/recipes/categories')
+    logger.log("getCategories returned ", res.data)
+    AppState.categories = res.data
   }
 
   // NOTE 🧺🔍 Get ingredients by recipe id request to the server.

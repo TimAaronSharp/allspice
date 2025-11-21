@@ -8,7 +8,7 @@ export class Recipe extends DatabaseItem{
    * @property {number} id
    * @property {Date} createdAt
    * @property {Date} updatedAt
-   * @property {string} title
+   * @property {string} name
    * @property {string} instructions
    * @property {string} img
    * @property {string} category
@@ -19,7 +19,7 @@ export class Recipe extends DatabaseItem{
    */
   constructor(data){
     super(data)
-    this.title = data.title
+    this.name = data.name
     this.instructions = data.instructions
     this.img = data.img
     this.category = data.category

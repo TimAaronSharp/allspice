@@ -94,6 +94,20 @@ public class RecipesController : ControllerBase
     }
   }
 
+  // NOTE 🔍🧺 Get enum list of recipe categories from database (allspice_recipes table).
+  [HttpGet("categories")]
+  public ActionResult<List<string>> GetCategories()
+  {
+    try
+    {
+      return _recipesService.GetCategories();
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
+
   [HttpGet("{recipeId}/ingredients")]
 
   public ActionResult<List<Ingredient>> GetIngredientsByRecipeId(int recipeId)

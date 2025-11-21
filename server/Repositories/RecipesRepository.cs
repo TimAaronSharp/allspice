@@ -16,8 +16,8 @@ public class RecipesRepository
   {
     string sql = @"
     INSERT INTO
-    allspice_recipes(title, instructions, img, category, creator_id)
-    VALUES(@Title, @Instructions, @Img, @Category, @CreatorId);
+    allspice_recipes(name, instructions, img, category, creator_id)
+    VALUES(@Name, @Instructions, @Img, @Category, @CreatorId);
     
     SELECT
     allspice_recipes.*,
@@ -50,7 +50,7 @@ public class RecipesRepository
     string sql = @"
     UPDATE allspice_recipes
     SET
-    title = @Title,
+    name = @Name,
     instructions = @Instructions,
     img = @Img,
     description = @Description,
@@ -113,5 +113,25 @@ public class RecipesRepository
       recipe.Creator = account;
       return recipe;
     }, new { profileId }).ToList();
+  }
+
+  // NOTE 🔍🧺 Get recipe categories method. Queries for the datatype of the "category" column in the "allspice_recipes" table in the database and returns the enum values as a single string. The string is parsed to extract the individual items and combine them into a list.
+  public List<string> GetCategories()
+  {
+    string sql = @"
+    SELECT COLUMN_TYPE
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = 'confident_yeti_fccf_db'
+    AND TABLE_NAME = 'allspice_recipes'
+    AND COLUMN_NAME = 'category';";
+
+    string enumString = _db.QuerySingleOrDefault<string>(sql);
+
+    return enumString
+        .Replace("enum(", "")
+        .Replace(")", "")
+        .Replace("'", "")
+        .Split(',')
+        .ToList();
   }
 }

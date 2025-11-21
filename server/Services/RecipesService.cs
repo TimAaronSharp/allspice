@@ -1,4 +1,5 @@
 
+
 namespace allspice.Services;
 
 public class RecipesService
@@ -70,5 +71,11 @@ public class RecipesService
     Profile profile = _profilesService.GetById(profileId);
 
     return _repo.GetByProfileId(profile.Id);
+  }
+
+  // NOTE 🔍🧺 Get enum list of recipe categories from database (allspice_recipes table). Sends request to repo.
+  public List<string> GetCategories()
+  {
+    return _repo.GetCategories();
   }
 }

@@ -15,37 +15,11 @@ const ingredients = computed(() => AppState.ingredients)
 const route = useRoute()
 const router = useRouter()
 
-const editableIngredientData = ref({
-  name: "",
-  quantity: "",
-  originRecipeId: 0
-})
-
 onMounted(() => {
   getRecipeById()
 })
 
-async function createIngredient() {
-  try {
-    // debugger
-    editableIngredientData.value.originRecipeId = recipe.value?.id
-    const ingredient = await ingredientsService.create(editableIngredientData.value)
 
-    editableIngredientData.value = {
-      name: "",
-      quantity: "",
-      originRecipeId: 0
-    }
-
-    const recipeIngredientLinkData = { recipeId: ingredient.originRecipeId, ingredientId: ingredient.id, creatorId: "" }
-    // debugger
-    await recipeIngredientLinksService.create(recipeIngredientLinkData)
-  }
-  catch (error) {
-    Pop.error(error, `Could not create ingredient: ${editableIngredientData.value.quantity} ${editableIngredientData.value.name}`);
-    logger.error(`Could not create ingredient: ${editableIngredientData.value.quantity} ${editableIngredientData.value.name}`.toUpperCase(), error)
-  }
-}
 
 async function getRecipeById() {
   try {
@@ -73,15 +47,6 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
 <!-- NOTE Add a description to recipe models/database table. -->
 
 <template>
-  <div>
-    <form @submit.prevent="createIngredient()">
-      <label for="ingredient-quantity" class="form-label">Quantity:</label>
-      <input v-model="editableIngredientData.quantity" class="w-100" id="ingredient-quantity" type="text">
-      <label for="ingredient-name" class="form-label">Ingredient:</label>
-      <input v-model="editableIngredientData.name" class="w-100" id="ingredient-name" type="text">
-      <button type="submit">Add Ingredient</button>
-    </form>
-  </div>
   <section class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -90,7 +55,7 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
             <img :src="recipe?.img" alt="" class="recipe-img">
           </div>
           <div class="recipe-data">
-            <h1>{{ recipe?.title }}</h1>
+            <h1>{{ recipe?.name }}</h1>
             <p>{{ recipe?.category[0].toUpperCase() + recipe?.category.slice(1) }}</p>
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->

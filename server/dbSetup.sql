@@ -12,7 +12,7 @@ CREATE TABLE allspice_recipes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     instructions VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     img VARCHAR(2000) NOT NULL,
     category ENUM(
@@ -27,6 +27,8 @@ CREATE TABLE allspice_recipes (
     creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
+
+ALTER TABLE allspice_recipes RENAME COLUMN title TO name;
 
 INSERT INTO
     allspice_recipes (
@@ -176,3 +178,10 @@ CREATE TABLE allspice_recipe_tags (
 )
 
 DROP TABLE allspice_recipe_tags;
+
+SELECT COLUMN_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE
+    TABLE_SCHEMA = 'confident_yeti_fccf_db'
+    AND TABLE_NAME = 'allspice_recipes'
+    AND COLUMN_NAME = 'category';

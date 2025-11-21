@@ -17,7 +17,7 @@ const props = defineProps({
     <div class="h-100 w-100 mt-3 d-flex flex-column justify-content-between">
       <div>
         <RouterLink :to="{ name: 'Recipe Page', params: { recipeId: recipeProp?.id } }">
-          <h5>{{ recipeProp?.title }}</h5>
+          <h5>{{ recipeProp?.name }}</h5>
         </RouterLink>
       </div>
       <div class="w-100 p-1 d-flex justify-content-between align-items-center">
