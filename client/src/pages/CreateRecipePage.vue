@@ -60,12 +60,13 @@ async function getCategories() {
 // }
 
 async function createRecipe() {
-  // try {
-
-  // }
-  // catch (error) {
-  //   Pop.error(error, `Could not create recipe `);
-  // }
+  try {
+    debugger
+    await recipesService.create(editableRecipeData.value)
+  }
+  catch (error) {
+    Pop.error(error, `Could not create recipe `);
+  }
 }
 
 </script>
@@ -76,16 +77,17 @@ async function createRecipe() {
     <form @submit.prevent="createRecipe()">
       <label for="recipe-name">Recipe Name:</label>
       <input v-model="editableRecipeData.name" class="w-100" id="recipe-name" type="text">
-      <label for="recipe-instructions">Cooking Instructions:</label>
-      <textarea v-model="editableRecipeData.instructions" class="w-100" id="recipe-instructions"></textarea>
       <label for="recipe-img">Recipe Image:</label>
       <input v-model="editableRecipeData.img" class="w-100" id="recipe-img" type="text">
+      <label for="recipe-instructions">Cooking Instructions:</label>
+      <textarea v-model="editableRecipeData.instructions" class="w-100" id="recipe-instructions"></textarea>
       <label for="recipe-category">Category:</label>
       <select v-model="editableRecipeData.category" id="recipe-category">
         <option value="" disabled>Select Category</option>
-        <option v-for="category in categories" :key="category + ' key'" :value="category + 'value'"> {{ category }}
+        <option v-for="category in categories" :key="category" :value="category"> {{ category }}
         </option>
       </select>
+      <button type="submit">Create Recipe</button>
     </form>
   </section>
   <!-- <div>
