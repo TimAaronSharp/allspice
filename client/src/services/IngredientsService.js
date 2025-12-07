@@ -7,7 +7,7 @@ import { Pop } from "@/utils/Pop.js"
 
 
 class IngredientsService {
-  // NOTE 🛠️ Create ingredient request to the server. After a new Ingredient class object is created with res.data AppState.ingredients is iterated over to see if the ingredient already exists in the array, and if it does it does not push, preventing duplication on the client (duplication already prevented in database).
+  // NOTE 🛠️ Create ingredient request to the server. After a new Ingredient class object is created with res.data, AppState.ingredients is iterated over to see if the ingredient already exists in the array, and if it does then it does not push, preventing duplication on the client (duplication already prevented in database).
   async create(ingredientData) {
     const res = await api.post('api/ingredients', ingredientData)
     logger.log("IngredientsService.create() returned ", + res.data)

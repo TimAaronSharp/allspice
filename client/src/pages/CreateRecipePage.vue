@@ -1,5 +1,6 @@
 <script setup>
 import { AppState } from '@/AppState.js'
+import IngredientInput from '@/components/IngredientInput.vue'
 import { ingredientsService } from '@/services/IngredientsService.js'
 import { recipeIngredientLinksService } from '@/services/RecipeIngredientLinksService.js'
 import { recipesService } from '@/services/RecipesService.js'
@@ -8,6 +9,8 @@ import { Pop } from '@/utils/Pop.js'
 import { computed, onMounted, ref } from 'vue'
 
 const categories = computed(() => AppState.categories)
+const ingredientsToCreate = computed(() => AppState.ingredientsToCreate)
+let newIngredientToggle = true
 
 const editableRecipeData = ref({
   name: "",
@@ -16,11 +19,7 @@ const editableRecipeData = ref({
   category: "",
 })
 
-const editableIngredientData = ref({
-  name: "",
-  quantity: "",
-  originRecipeId: 0
-})
+let newIngredientInput = true
 
 onMounted(() => {
   getCategories()
@@ -35,7 +34,6 @@ async function getCategories() {
     logger.error("Could not get categories.".toUpperCase(), error)
   }
 }
-
 
 // async function createIngredient() {
 //   try {
@@ -61,7 +59,6 @@ async function getCategories() {
 
 async function createRecipe() {
   try {
-    debugger
     await recipesService.create(editableRecipeData.value)
   }
   catch (error) {
@@ -74,31 +71,31 @@ async function createRecipe() {
 
 <template>
   <section>
+    <h2>Recipe:</h2>
     <form @submit.prevent="createRecipe()">
       <label for="recipe-name">Recipe Name:</label>
-      <input v-model="editableRecipeData.name" class="w-100" id="recipe-name" type="text">
+      <input v-model="editableRecipeData.name" class="w-100" id="recipe-name" type="text" required>
       <label for="recipe-img">Recipe Image:</label>
-      <input v-model="editableRecipeData.img" class="w-100" id="recipe-img" type="text">
+      <input v-model="editableRecipeData.img" class="w-100" id="recipe-img" type="text" required>
       <label for="recipe-instructions">Cooking Instructions:</label>
-      <textarea v-model="editableRecipeData.instructions" class="w-100" id="recipe-instructions"></textarea>
+      <textarea v-model="editableRecipeData.instructions" class="w-100" id="recipe-instructions" required></textarea>
       <label for="recipe-category">Category:</label>
-      <select v-model="editableRecipeData.category" id="recipe-category">
+      <select v-model="editableRecipeData.category" id="recipe-category" required>
         <option value="" disabled>Select Category</option>
         <option v-for="category in categories" :key="category" :value="category"> {{ category }}
         </option>
       </select>
+      <hr>
+      <h2>Ingredients:</h2>
+      <p v-for="ingredientToCreate in ingredientsToCreate" :key="ingredientToCreate + ' key'"> {{
+        ingredientToCreate.quantity }} {{ ingredientToCreate.name }}
+      </p>
+      <hr>
       <button type="submit">Create Recipe</button>
     </form>
+    <!-- NOTE Check with Cameron to see if he thinks there would be a problem with having input fields without a form (best practices, ADA, etc.) -->
+    <IngredientInput v-if="newIngredientInput == true"></IngredientInput>
   </section>
-  <!-- <div>
-    <form @submit.prevent="createIngredient()">
-      <label for="ingredient-quantity" class="form-label">Quantity:</label>
-      <input v-model="editableIngredientData.quantity" class="w-100" id="ingredient-quantity" type="text">
-      <label for="ingredient-name" class="form-label">Ingredient:</label>
-      <input v-model="editableIngredientData.name" class="w-100" id="ingredient-name" type="text">
-      <button type="submit">Add Ingredient</button>
-    </form>
-  </div> -->
 </template>
 
 
