@@ -66,6 +66,11 @@ async function createRecipe() {
   }
 }
 
+function removeIngredientFromCreateList(ingredientToRemove) {
+  const ingredientIndex = AppState.ingredientsToCreate.findIndex(ingredient => ingredient.name == ingredientToRemove.name)
+  AppState.ingredientsToCreate.splice(ingredientIndex, 1)
+}
+
 </script>
 
 
@@ -86,13 +91,15 @@ async function createRecipe() {
         </option>
       </select>
       <hr>
-      <h2>Ingredients:</h2>
-      <p v-for="ingredientToCreate in ingredientsToCreate" :key="ingredientToCreate + ' key'"> {{
-        ingredientToCreate.quantity }} {{ ingredientToCreate.name }}
-      </p>
-      <hr>
       <button type="submit">Create Recipe</button>
+      <hr>
     </form>
+    <h2>Ingredients:</h2>
+    <div v-for="ingredientToCreate in ingredientsToCreate" :key="ingredientToCreate + ' key'" class="d-flex">
+      <p> {{ ingredientToCreate.quantity }} {{ ingredientToCreate.name }}
+      </p> <button @click="removeIngredientFromCreateList(ingredientToCreate)"
+        class="mdi mdi-close-circle text-red transparent-btn-style"></button>
+    </div>
     <!-- NOTE Check with Cameron to see if he thinks there would be a problem with having input fields without a form (best practices, ADA, etc.) -->
     <IngredientInput v-if="newIngredientInput == true"></IngredientInput>
   </section>
