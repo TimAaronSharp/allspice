@@ -10,7 +10,7 @@ import { computed, onMounted, ref } from 'vue'
 
 const categories = computed(() => AppState.categories)
 const ingredientsToCreate = computed(() => AppState.ingredientsToCreate)
-let newIngredientToggle = true
+let newIngredient = computed(() => AppState.newIngredient)
 
 const editableRecipeData = ref({
   name: "",
@@ -18,8 +18,6 @@ const editableRecipeData = ref({
   img: "",
   category: "",
 })
-
-let newIngredientInput = true
 
 onMounted(() => {
   getCategories()
@@ -66,6 +64,11 @@ async function createRecipe() {
   }
 }
 
+function newIngredientToggle() {
+  AppState.newIngredient = !AppState.newIngredient
+  logger.log("newIngredientToggle is now ", newIngredient)
+}
+
 function removeIngredientFromCreateList(ingredientToRemove) {
   const ingredientIndex = AppState.ingredientsToCreate.findIndex(ingredient => ingredient.name == ingredientToRemove.name)
   AppState.ingredientsToCreate.splice(ingredientIndex, 1)
@@ -100,8 +103,10 @@ function removeIngredientFromCreateList(ingredientToRemove) {
       </p> <button @click="removeIngredientFromCreateList(ingredientToCreate)"
         class="mdi mdi-close-circle text-red transparent-btn-style"></button>
     </div>
+    <button @click="newIngredientToggle()" v-if="!newIngredient">Add
+      Ingredient</button>
     <!-- NOTE Check with Cameron to see if he thinks there would be a problem with having input fields without a form (best practices, ADA, etc.) -->
-    <IngredientInput v-if="newIngredientInput == true"></IngredientInput>
+    <IngredientInput v-if="newIngredient"></IngredientInput>
   </section>
 </template>
 

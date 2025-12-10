@@ -17,6 +17,7 @@ export const AppState = reactive({
   /** @type {import('./models/Ingredient.js').Ingredient} recipe from the database*/
   activeIngredient: null,
   ingredientsToCreate:[],
+  newIngredient: false,
   categories:[]
 })
 

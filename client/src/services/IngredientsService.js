@@ -11,27 +11,28 @@ class IngredientsService {
   async create(ingredientData) {
     const res = await api.post('api/ingredients', ingredientData)
     logger.log("IngredientsService.create() returned ", + res.data)
-    const createdIngredient = new Ingredient(res.data)
+
+
+    const createdIngredients = this.makeIngredients(res.data)
+    // const createdIngredient = new Ingredient(res.data)
+    
+    createdIngredients.forEach(createdIngredient => {
 
     if(AppState.ingredients.find(ingredient => ingredient.id == createdIngredient.id)){
-      Pop.toast("Ingredient already exists in recipe.")
-      return res.data
+      Pop.toast(`${createdIngredient.name} already exists in recipe.`)
+      return
     }
-    AppState.ingredients.push(createdIngredient)
+      AppState.ingredients.push(createdIngredient)
+    })
     return res.data
   }
-  // Playing around with @param/@returns. This was because originally makeIngredients() would behave differently based on if it was an array or not (like RecipesService.makeRecipes()), but upon further pondering I don't believe I actually will ever need an AppState.activeIngredient after all. Commenting for now in case I realize later on that I do.
-  /**
-   * 
-   * @param {IngredientData[]} ingredients 
-   * @returns {Ingredient[]}
-   */
-  // NOTE 🏭 Function to take ingredient data and create Ingredient class objects from it. Checks if data is an array (maps array to create multiple Ingredients) or single (creates new single Ingredient (Likely no longer needed)).
+  
+  // NOTE 🏭 Function to take ingredient data and create Ingredient class objects from it. Checks if data is an array (maps array to create multiple Ingredients) or single (creates new single Ingredient, but returns as an array to prevent type definition errors. Really should only be in the unrealistic scenario when a recipe has only one ingredient).
   makeIngredients(ingredients) {
-    // if (Array.isArray(ingredients)) {
+    if (Array.isArray(ingredients)) {
       return AppState.ingredients = ingredients.map(pojo => new Ingredient(pojo))
-    // }
-    // return AppState.activeIngredient = new Ingredient(ingredients)
+    }
+    return AppState.ingredients = [new Ingredient(ingredients)]
   }
 }
 
