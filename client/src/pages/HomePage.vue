@@ -7,6 +7,7 @@ import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
 import { computed, onMounted } from 'vue';
 
+const account = computed(() => AppState.account)
 const recipes = computed(() => AppState.recipes)
 
 onMounted(() => {
@@ -26,6 +27,11 @@ async function getAllRecipes() {
 </script>
 
 <template>
+  <section v-if="account">
+    <RouterLink :to="{ name: 'Create Recipe Page' }">
+      <button>Create Recipe</button>
+    </RouterLink>
+  </section>
   <section class="container-fluid">
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-5 mt-4 px-5">
       <div v-for="recipe in recipes" :key="'recipe ' + recipe.id">

@@ -23,7 +23,7 @@ public class IngredientsController : ControllerBase
 
   [Authorize]
   [HttpPost]
-  public async Task<ActionResult<Ingredient>> Create([FromBody] Ingredient ingredientData)
+  public async Task<ActionResult<List<Ingredient>>> Create([FromBody] List<Ingredient> ingredientData)
   {
     try
     {
@@ -38,18 +38,18 @@ public class IngredientsController : ControllerBase
 
   // NOTE 💣 Delete Ingredient method. Gets user info for authentication.
 
-  [Authorize]
-  [HttpDelete("{ingredientId}")]
-  public async Task<ActionResult<string>> Delete(int ingredientId)
-  {
-    try
-    {
-      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      return Ok(_ingredientsService.Delete(ingredientId, userInfo));
-    }
-    catch (Exception exception)
-    {
-      return BadRequest(exception.Message);
-    }
-  }
+  // [Authorize]
+  // [HttpDelete("{ingredientId}")]
+  // public async Task<ActionResult<string>> Delete(int ingredientId)
+  // {
+  //   try
+  //   {
+  //     Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+  //     return Ok(_ingredientsService.Delete(ingredientId, userInfo));
+  //   }
+  //   catch (Exception exception)
+  //   {
+  //     return BadRequest(exception.Message);
+  //   }
+  // }
 }

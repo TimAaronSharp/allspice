@@ -6,9 +6,18 @@ export const AppState = reactive({
   identity: null,
   /** @type {import('./models/Account.js').Account} user info from the database*/
   account: null,
+  /** @type {import('./models/Account.js').Profile} user info from the database*/
+  profile: null,
   /** @type {import('./models/Recipe.js').Recipe[]} recipes from the database*/
   recipes:[],
   /** @type {import('./models/Recipe.js').Recipe} recipe from the database*/
-  activeRecipe:null
+  activeRecipe:null,
+  /** @type {import('./models/Ingredient.js').Ingredient[]} ingredients from the database*/
+  ingredients:[],
+  /** @type {import('./models/Ingredient.js').Ingredient} recipe from the database*/
+  activeIngredient: null,
+  ingredientsToCreate:[],
+  newIngredient: false,
+  categories:[]
 })
 

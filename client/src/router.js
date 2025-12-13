@@ -26,6 +26,12 @@ const routes = [
     path: '/recipes/:recipeId',
     name:'Recipe Page',
     component: loadPage('RecipePage')
+  },
+  {
+    path: '/createRecipe',
+    name: 'Create Recipe Page',
+    component: loadPage('CreateRecipePage'),
+    beforeEnter: authGuard
   }
 ]
 

@@ -1,4 +1,5 @@
 
+
 namespace allspice.Services;
 
 public class RecipesService
@@ -26,7 +27,7 @@ public class RecipesService
       throw new Exception($"You cannot delete another user's recipe, {userInfo.Name}.".ToUpper());
     }
     _repo.Delete(recipeId);
-    return $"Recipe {recipeToDelete.Title} has been deleted. You monster.";
+    return $"Recipe {recipeToDelete.Name} has been deleted. You monster.";
   }
 
   public Recipe Edit(Profile userInfo, Recipe updateRecipeData, int recipeId)
@@ -38,7 +39,7 @@ public class RecipesService
       throw new Exception($"You cannot edit another user's recipe, {userInfo.Name}.".ToUpper());
     }
 
-    recipeToUpdate.Title = updateRecipeData.Title ?? recipeToUpdate.Title;
+    recipeToUpdate.Name = updateRecipeData.Name ?? recipeToUpdate.Name;
     recipeToUpdate.Instructions = updateRecipeData.Instructions ?? recipeToUpdate.Instructions;
     recipeToUpdate.Img = updateRecipeData.Img ?? recipeToUpdate.Img;
     recipeToUpdate.Description = updateRecipeData.Description ?? recipeToUpdate.Description;
@@ -70,5 +71,11 @@ public class RecipesService
     Profile profile = _profilesService.GetById(profileId);
 
     return _repo.GetByProfileId(profile.Id);
+  }
+
+  // NOTE 🔍🧺 Get enum list of recipe categories from database (allspice_recipes table). Sends request to repo.
+  public List<string> GetCategories()
+  {
+    return _repo.GetCategories();
   }
 }

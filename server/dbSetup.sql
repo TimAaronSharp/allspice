@@ -12,7 +12,7 @@ CREATE TABLE allspice_recipes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     instructions VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     img VARCHAR(2000) NOT NULL,
     category ENUM(
@@ -27,6 +27,8 @@ CREATE TABLE allspice_recipes (
     creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
+
+ALTER TABLE allspice_recipes RENAME COLUMN title TO name;
 
 INSERT INTO
     allspice_recipes (
@@ -55,7 +57,7 @@ CREATE TABLE allspice_ingredients (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     quantity VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    recipe_id INT NOT NULL,
+    origin_recipe_id INT NOT NULL,
     UNIQUE KEY uq_ingredient_name_quantity (name, quantity)
 )
 
@@ -71,7 +73,7 @@ DROP TABLE allspice_ingredients
 
 -- allspice_ingredients END
 
--- allspice_recipe_ingredients START
+-- allspice_recipe_ingredient_links START
 -- This is a join table that only will have an entry for every ingredient that a recipe has. Example: Recipe id:1 has 5 ingredients, so there will be 5 entries in this table for that recipe/ingredients. This table will be used to match ingredients to recipes. This allows the entries in the ingredients table to not need to be duplicated if more than one recipe uses that same ingredient ('sugar', '1 cup'), saving space and reducing redundancy.
 
 -- id | recipe_di | ingredient_id
@@ -82,18 +84,23 @@ DROP TABLE allspice_ingredients
 --  4   1            4
 --  5   1            5
 
-CREATE TABLE allspice_recipe_ingredients (
+CREATE TABLE allspice_recipe_ingredient_links (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     recipe_id INT NOT NULL,
     ingredient_id INT NOT NULL,
+    creator_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE,
-    FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE
+    FOREIGN KEY (ingredient_id) REFERENCES allspice_ingredients (id) ON DELETE CASCADE,
+    UNIQUE KEY uq_recipe_ingredient_ids (recipe_id, ingredient_id)
 )
 
-DROP TABLE allspice_recipe_ingredients;
--- allspice_recipe_ingredients END
+ALTER TABLE allspice_recipe_ingredient_links
+ADD creator_id VARCHAR(255) NOT NULL
+
+DROP TABLE allspice_recipe_ingredient_links;
+-- allspice_recipe_ingredient_links END
 
 -- allspice_favorites START
 
@@ -135,7 +142,9 @@ CREATE TABLE allspice_recipe_comments (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     body VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    recipe_id INT NOT NULL,
     creator_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE,
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
@@ -169,3 +178,10 @@ CREATE TABLE allspice_recipe_tags (
 )
 
 DROP TABLE allspice_recipe_tags;
+
+SELECT COLUMN_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE
+    TABLE_SCHEMA = 'confident_yeti_fccf_db'
+    AND TABLE_NAME = 'allspice_recipes'
+    AND COLUMN_NAME = 'category';

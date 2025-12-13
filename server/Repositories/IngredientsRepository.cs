@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace allspice.Repositories;
 
 public class IngredientsRepository
@@ -13,20 +15,57 @@ public class IngredientsRepository
     _db = db;
   }
 
-  // NOTE 🛠️ Create ingredient method. Creates a new ingredient in the database. Name + Quantity create a unique key in the allspice_ingredients table to prevent ingredient duplication to save database storage space. 
-  // When ingredient is being created it checks if the unique key (Name + Quantity) already exists and if it does it updates and returns the id. 
+  // NOTE 🛠️ Create ingredient method. Creates a new ingredient in the database. Name + Quantity create a unique key in the allspice_ingredients table to prevent ingredient duplication (WHERE NOT EXISTS checks for the unique key, if it does not exist it will create the new ingredient). 
   // A join table will be used to connect recipes with ingredients by recipe_id/ingredient_id.
 
-  public Ingredient Create(Ingredient ingredientData)
+  public List<Ingredient> Create(List<Ingredient> ingredientData)
   {
-    string sql = @"
-    INSERT INTO allspice_ingredients (name, quantity, recipe_id)
-    VALUES (@Name, @quantity, @RecipeId)
-    ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
+    // NOTE Returns an empty list instead of erroring out.
+    if (ingredientData == null || ingredientData.Count == 0)
+    {
+      return new List<Ingredient>();
+    }
 
-    SELECT * FROM allspice_ingredients where id = LAST_INSERT_ID();";
+    var sql = new StringBuilder();
+    var valueParams = new DynamicParameters();
 
-    return _db.Query<Ingredient>(sql, ingredientData).SingleOrDefault();
+    for (int i = 0; i < ingredientData.Count; i++)
+    {
+      sql.AppendLine($@"
+        INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
+        SELECT @Name{i}, @Quantity{i}, @OriginRecipeId{i}
+        WHERE NOT EXISTS (
+          SELECT 1 FROM allspice_ingredients
+          WHERE name = @Name{i} AND quantity = @Quantity{i});");
+
+      valueParams.Add($"@Name{i}", ingredientData[i].Name);
+      valueParams.Add($"@Quantity{i}", ingredientData[i].Quantity);
+      valueParams.Add($"@OriginRecipeId{i}", ingredientData[i].OriginRecipeId);
+    }
+
+    sql.AppendLine("SELECT * FROM allspice_ingredients WHERE ");
+
+    for (int i = 0; i < ingredientData.Count; i++)
+    {
+      if (i > 0)
+      {
+        sql.Append(" OR ");
+      }
+      sql.Append($"(name = @Name{i} AND quantity = @Quantity{i})");
+    }
+
+    return _db.Query<Ingredient>(sql.ToString(), valueParams).ToList();
+
+    // string sql = @"
+    // INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
+    // SELECT @Name, @Quantity, @OriginRecipeId
+    // WHERE NOT EXISTS (
+    //   SELECT 1 FROM allspice_ingredients
+    //   WHERE name = @Name AND quantity = @Quantity);
+
+    // SELECT * FROM allspice_ingredients where id = LAST_INSERT_ID();";
+
+    // return _db.Query<Ingredient>(sql, ingredientData).ToList();
   }
 
   // NOTE 💣 Delete Ingredient method. Deletes ingredient from database.
@@ -43,7 +82,7 @@ public class IngredientsRepository
     }
   }
 
-  // NOTE 🔍🧩 Get ingredient by id method. Queries database for ingredient by it's id.
+  // NOTE 🔍🧩 Get ingredient by id method. Queries database for ingredient by its id.
 
   public Ingredient GetById(int ingredientId)
   {
@@ -54,21 +93,21 @@ public class IngredientsRepository
 
   // NOTE 🔍🧩📓 Get ingredients by recipe id. Queries database for all ingredients that have the recipeId.
 
-  public List<Ingredient> GetByRecipeId(List<int> ingredientIds)
-  {
-    // NOTE Shouldn't ever happen organically, but just in case.
-    if (ingredientIds == null || ingredientIds.Count == 0)
-    {
-      return new List<Ingredient>();
-    }
+  // public List<Ingredient> GetByRecipeId(List<int> ingredientIds)
+  // {
+  //   // NOTE Shouldn't ever happen organically, but just in case.
+  //   if (ingredientIds == null || ingredientIds.Count == 0)
+  //   {
+  //     return new List<Ingredient>();
+  //   }
 
-    string sql = @"
-    SELECT *
-    FROM allspice_ingredients 
-    WHERE allspice_ingredients.id IN @ingredientIds;";
+  //   string sql = @"
+  //   SELECT *
+  //   FROM allspice_ingredients 
+  //   WHERE allspice_ingredients.id IN @ingredientIds;";
 
-    return _db.Query<Ingredient>(sql, new { ingredientIds }).ToList();
-  }
+  //   return _db.Query<Ingredient>(sql, new { ingredientIds }).ToList();
+  // }
 }
 
 // SELECT
