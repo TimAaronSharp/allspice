@@ -15,13 +15,13 @@ public class RecipeIngredientLinksController : ControllerBase
 
   [Authorize]
   [HttpPost]
-  public async Task<ActionResult<RecipeIngredientLink>> Create([FromBody] RecipeIngredientLink recipeIngredientLinkData)
+  public async Task<ActionResult<List<RecipeIngredientLink>>> Create([FromBody] List<RecipeIngredientLink> recipeIngredientLinkData)
   {
     try
     {
       Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      recipeIngredientLinkData.CreatorId = userInfo.Id;
-      return Ok(_RecipeIngredientLinksService.Create(recipeIngredientLinkData));
+      recipeIngredientLinkData.ForEach(recipeIngredientLink => recipeIngredientLink.CreatorId = userInfo.Id);
+      return Ok(_RecipeIngredientLinksService.Create(recipeIngredientLinkData, userInfo));
     }
     catch (Exception exception)
     {

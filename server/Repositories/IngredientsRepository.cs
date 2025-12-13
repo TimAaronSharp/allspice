@@ -18,51 +18,54 @@ public class IngredientsRepository
   // NOTE 🛠️ Create ingredient method. Creates a new ingredient in the database. Name + Quantity create a unique key in the allspice_ingredients table to prevent ingredient duplication (WHERE NOT EXISTS checks for the unique key, if it does not exist it will create the new ingredient). 
   // A join table will be used to connect recipes with ingredients by recipe_id/ingredient_id.
 
-  public Ingredient Create(Ingredient ingredientData)
+  public List<Ingredient> Create(List<Ingredient> ingredientData)
   {
-    string sql = @"
-    INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
-    SELECT @Name, @Quantity, @OriginRecipeId
-    WHERE NOT EXISTS (
-      SELECT 1 FROM allspice_ingredients
-      WHERE name = @Name AND quantity = @Quantity);
+    // NOTE Returns an empty list instead of erroring out.
+    if (ingredientData == null || ingredientData.Count == 0)
+    {
+      return new List<Ingredient>();
+    }
 
-    SELECT * FROM allspice_ingredients where id = LAST_INSERT_ID();";
+    var sql = new StringBuilder();
+    var valueParams = new DynamicParameters();
 
-    return _db.Query<Ingredient>(sql, ingredientData).SingleOrDefault();
+    for (int i = 0; i < ingredientData.Count; i++)
+    {
+      sql.AppendLine($@"
+        INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
+        SELECT @Name{i}, @Quantity{i}, @OriginRecipeId{i}
+        WHERE NOT EXISTS (
+          SELECT 1 FROM allspice_ingredients
+          WHERE name = @Name{i} AND quantity = @Quantity{i});");
 
-    // NOTE Below is code to be able to create multiple ingredients from 1 create ingredient function call. Will revisit later as a stretch goal.
+      valueParams.Add($"@Name{i}", ingredientData[i].Name);
+      valueParams.Add($"@Quantity{i}", ingredientData[i].Quantity);
+      valueParams.Add($"@OriginRecipeId{i}", ingredientData[i].OriginRecipeId);
+    }
 
-    // if (ingredientData == null || ingredientData.Count == 0)
-    // {
-    //   return new List<Ingredient>();
-    // }
+    sql.AppendLine("SELECT * FROM allspice_ingredients WHERE ");
 
-    // var sql = new StringBuilder();
-    // var valueParams = new DynamicParameters();
+    for (int i = 0; i < ingredientData.Count; i++)
+    {
+      if (i > 0)
+      {
+        sql.Append(" OR ");
+      }
+      sql.Append($"(name = @Name{i} AND quantity = @Quantity{i})");
+    }
 
-    // for (int i = 0; i < ingredientData.Count; i++)
-    // {
-    //   sql.AppendLine($@"
-    //     INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
-    //     SELECT @Name{i}, @Quantity{i}, @OriginRecipeId{i}
-    //     WHERE NOT EXISTS (
-    //       SELECT 1 FROM allspice_ingredients
-    //       WHERE name = @Name{i} AND quantity = @Quantity{i});");
+    return _db.Query<Ingredient>(sql.ToString(), valueParams).ToList();
 
-    //   valueParams.Add($"@Name{i}", ingredientData[i].Name);
-    //   valueParams.Add($"@Quantity{i}", ingredientData[i].Quantity);
-    //   valueParams.Add($"@OriginRecipeId{i}", ingredientData[i].OriginRecipeId);
-    // }
+    // string sql = @"
+    // INSERT INTO allspice_ingredients (name, quantity, origin_recipe_id)
+    // SELECT @Name, @Quantity, @OriginRecipeId
+    // WHERE NOT EXISTS (
+    //   SELECT 1 FROM allspice_ingredients
+    //   WHERE name = @Name AND quantity = @Quantity);
 
-    // sql.AppendLine("SELECT * FROM allspice_ingredients WHERE ");
-    // for (int i = 0; i < ingredientData.Count; i++)
-    // {
-    //   sql.Append($"(name = @Name{i} AND quantity = @Quantity{i} OR )");
-    // }
-    // sql.Length -= 4;
+    // SELECT * FROM allspice_ingredients where id = LAST_INSERT_ID();";
 
-    // return _db.Query<Ingredient>(sql.ToString(), valueParams).ToList();
+    // return _db.Query<Ingredient>(sql, ingredientData).ToList();
   }
 
   // NOTE 💣 Delete Ingredient method. Deletes ingredient from database.

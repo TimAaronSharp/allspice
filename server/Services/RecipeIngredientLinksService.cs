@@ -6,13 +6,15 @@ public class RecipeIngredientLinksService
 
   private readonly RecipeIngredientLinksRepository _repo;
   private readonly IngredientsService _ingredientsService;
+  private readonly RecipesService _recipesService;
 
   // NOTE 🏗️ Class constructor.
 
-  public RecipeIngredientLinksService(RecipeIngredientLinksRepository repo, IngredientsService ingredientsService)
+  public RecipeIngredientLinksService(RecipeIngredientLinksRepository repo, IngredientsService ingredientsService, RecipesService recipesService)
   {
     _repo = repo;
     _ingredientsService = ingredientsService;
+    _recipesService = recipesService;
   }
 
   // NOTE 🔍 Method to check if any recipeIngredients exist that have a given ingredientId. If there is, then nothing happens. If there aren't any, then the ingredient will be deleted from the allspice_ingredients table through the IngredientsService. This is only called from RecipeIngredientLinksService.Delete().
@@ -27,8 +29,16 @@ public class RecipeIngredientLinksService
 
   // NOTE 🛠️ Create RecipeIngredient method. Receives the ingredient that was just created in the allspice_ingredients table and sends it to the RecipeIngredientLinksRepository to create the entry in the allspice_recipe_ingredient_links table (which is just a linking table that links recipes and ingredients by their ids). This allows multiple recipes can use the same ingredient from the ingredients table (if 2 recipes happen to write it the exact way. This saves storage space in the database by referencing ingredients that already exist instead of creating duplicates of the same recipe).
 
-  public RecipeIngredientLink Create(RecipeIngredientLink recipeIngredientLinkData)
+  public List<RecipeIngredientLink> Create(List<RecipeIngredientLink> recipeIngredientLinkData, Profile userInfo)
   {
+    // Shouldn't ever be a problem with a user creating a recipeIngredientLink for a recipe they didn't create, but just in case.
+    Recipe recipe = _recipesService.GetById(recipeIngredientLinkData[0].RecipeId);
+
+    if (recipe.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot create a recipe ingredient link on another user's recipe, {userInfo.Name}.".ToUpper());
+    }
+
     return _repo.Create(recipeIngredientLinkData);
   }
 

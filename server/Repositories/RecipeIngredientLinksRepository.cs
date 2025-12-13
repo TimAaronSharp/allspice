@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.VisualBasic;
 
 namespace allspice.Repositories;
@@ -25,26 +26,53 @@ public class RecipeIngredientLinksRepository
 
   // NOTE 🛠️ Create RecipeIngredient method. Creates an entry in the allspice_recipe_ingredient_links table that is the relationship between the recipe and ingredient. Having this join table allows the ingredients to be re-used between different recipes instead of duplication (say if 2 different recipes call for 'sugar' '1 cup' it won't duplicate that ingredient. It will instead create a relationship between the recipe and the already existing ingredient).
 
-  public RecipeIngredientLink Create(RecipeIngredientLink recipeIngredientLinkData)
+  public List<RecipeIngredientLink> Create(List<RecipeIngredientLink> recipeIngredientLinkData)
   {
-    string sql = @"
-    INSERT INTO allspice_recipe_ingredient_links (recipe_id, ingredient_id, creator_id)
-    SELECT @RecipeId, @IngredientId, @CreatorId
-    WHERE NOT EXISTS (
-      SELECT 1 FROM allspice_recipe_ingredient_links
-      WHERE recipe_id = @RecipeId AND ingredient_id = @IngredientId);
-    
-    SELECT * FROM allspice_recipe_ingredient_links WHERE id = LAST_INSERT_ID();";
+    if (recipeIngredientLinkData == null || recipeIngredientLinkData.Count == 0)
+    {
+      return new List<RecipeIngredientLink>();
+    }
 
-    return _db.Query<RecipeIngredientLink>(sql, recipeIngredientLinkData).SingleOrDefault();
+    var sql = new StringBuilder();
+    var valueParams = new DynamicParameters();
 
+    for (int i = 0; i < recipeIngredientLinkData.Count; i++)
+    {
+      sql.AppendLine($@"
+      INSERT INTO allspice_recipe_ingredient_links (recipe_id, ingredient_id, creator_id)
+      SELECT @RecipeId{i}, @IngredientId{i}, @CreatorId{i}
+      WHERE NOT EXISTS (
+        SELECT 1 FROM allspice_recipe_ingredient_links
+        WHERE recipe_id = @RecipeId{i} AND ingredient_id = @IngredientId{i});");
+
+      valueParams.Add($"@RecipeId{i}", recipeIngredientLinkData[i].RecipeId);
+      valueParams.Add($"@IngredientId{i}", recipeIngredientLinkData[i].IngredientId);
+      valueParams.Add($"@CreatorId{i}", recipeIngredientLinkData[i].CreatorId);
+    }
+
+    sql.AppendLine("SELECT * FROM allspice_recipe_ingredient_links WHERE ");
+
+    for (int i = 0; i < recipeIngredientLinkData.Count; i++)
+    {
+      if (i > 0)
+      {
+        sql.Append(" OR ");
+      }
+      sql.Append($"(recipe_id = @RecipeId{i} AND ingredient_id = @IngredientId{i})");
+    }
+
+    return _db.Query<RecipeIngredientLink>(sql.ToString(), valueParams).ToList();
 
     // string sql = @"
     // INSERT INTO allspice_recipe_ingredient_links (recipe_id, ingredient_id, creator_id)
-    // VALUES (@RecipeId, @IngredientId, @CreatorId)
-    // ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
+    // SELECT @RecipeId, @IngredientId, @CreatorId
+    // WHERE NOT EXISTS (
+    //   SELECT 1 FROM allspice_recipe_ingredient_links
+    //   WHERE recipe_id = @RecipeId AND ingredient_id = @IngredientId);
 
     // SELECT * FROM allspice_recipe_ingredient_links WHERE id = LAST_INSERT_ID();";
+
+    // return _db.Query<RecipeIngredientLink>(sql, recipeIngredientLinkData).ToList();
   }
 
   // NOTE 💣 Delete RecipeIngredient method. Finds the RecipeIngredient that matches the recipeId and ingredientId and deletes from the database. This is only used for if a user is changing an ingredient in their recipe.

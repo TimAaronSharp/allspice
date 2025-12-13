@@ -8,7 +8,6 @@ class RecipeIngredientLinksService {
     const res = await api.post('api/recipeIngredientLinks', recipeIngredientLinkData)
     logger.log("RecipeIngredientLinksService.create() returned ", res.data)
   }
-  
 }
 
 export const recipeIngredientLinksService = new RecipeIngredientLinksService()

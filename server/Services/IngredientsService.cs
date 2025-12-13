@@ -18,16 +18,16 @@ public class IngredientsService
 
   // NOTE 🛠️ Create ingredient method. Gets recipe from recipe id to check if user is recipe creator to prevent users from creating an ingredient on another user's recipe. If true, passes ingredientData to repo.
 
-  public Ingredient Create(Ingredient ingredientData, Profile userInfo)
+  public List<Ingredient> Create(List<Ingredient> ingredientData, Profile userInfo)
   {
-    Recipe recipe = _recipesService.GetById(ingredientData.OriginRecipeId);
+    Recipe recipe = _recipesService.GetById(ingredientData[0].OriginRecipeId);
 
     if (recipe.CreatorId != userInfo.Id)
     {
       throw new Exception($"You cannot create an ingredient on another user's recipe, {userInfo.Name}.".ToUpper());
     }
 
-    Ingredient ingredientToCreate = _repo.Create(ingredientData);
+    List<Ingredient> ingredientToCreate = _repo.Create(ingredientData);
 
     return ingredientToCreate;
   }

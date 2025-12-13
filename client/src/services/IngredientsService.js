@@ -18,16 +18,18 @@ class IngredientsService {
     
     createdIngredients.forEach(createdIngredient => {
 
-    if(AppState.ingredients.find(ingredient => ingredient.id == createdIngredient.id)){
-      Pop.toast(`${createdIngredient.name} already exists in recipe.`)
-      return
-    }
+    // if(AppState.ingredients.find(ingredient => ingredient.id == createdIngredient.id)){
+    //   Pop.toast(`${createdIngredient.name} already exists in recipe.`)
+    //   return
+    // }
       AppState.ingredients.push(createdIngredient)
     })
     return res.data
   }
   
   // NOTE 🏭 Function to take ingredient data and create Ingredient class objects from it. Checks if data is an array (maps array to create multiple Ingredients) or single (creates new single Ingredient, but returns as an array to prevent type definition errors. Really should only be in the unrealistic scenario when a recipe has only one ingredient).
+
+  // NOTE Do I need this to set AppState.ingredients or can I just have it return the new Ingredients? Look into whether this is needed/if it would be worth changing.
   makeIngredients(ingredients) {
     if (Array.isArray(ingredients)) {
       return AppState.ingredients = ingredients.map(pojo => new Ingredient(pojo))

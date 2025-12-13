@@ -1,6 +1,8 @@
 <script setup>
 import { AppState } from '@/AppState.js'
 import IngredientInput from '@/components/IngredientInput.vue'
+import { Recipe } from '@/models/Recipe.js'
+import { RecipeIngredientLink } from '@/models/RecipeIngredientLink.js'
 import { ingredientsService } from '@/services/IngredientsService.js'
 import { recipeIngredientLinksService } from '@/services/RecipeIngredientLinksService.js'
 import { recipesService } from '@/services/RecipesService.js'
@@ -10,6 +12,7 @@ import { computed, onMounted, ref } from 'vue'
 
 const categories = computed(() => AppState.categories)
 const ingredientsToCreate = computed(() => AppState.ingredientsToCreate)
+const createdRecipe = computed(() => AppState.activeRecipe)
 let newIngredient = computed(() => AppState.newIngredient)
 
 const editableRecipeData = ref({
@@ -21,6 +24,7 @@ const editableRecipeData = ref({
 
 onMounted(() => {
   getCategories()
+  AppState.ingredientsToCreate = []
 })
 
 async function getCategories() {
@@ -33,45 +37,75 @@ async function getCategories() {
   }
 }
 
-// async function createIngredient() {
-//   try {
-//     // debugger
-//     editableIngredientData.value.originRecipeId = recipe.value?.id
-//     const ingredient = await ingredientsService.create(editableIngredientData.value)
+async function createIngredients() {
+  try {
+    // debugger
+    AppState.ingredientsToCreate.forEach(ingredientToCreate => {
+      ingredientToCreate.originRecipeId = AppState.activeRecipe.id
+    })
 
-//     editableIngredientData.value = {
-//       name: "",
-//       quantity: "",
-//       originRecipeId: 0
-//     }
+    const createdIngredients = await ingredientsService.create(AppState.ingredientsToCreate)
 
-//     const recipeIngredientLinkData = { recipeId: ingredient.originRecipeId, ingredientId: ingredient.id, creatorId: "" }
-//     // debugger
-//     await recipeIngredientLinksService.create(recipeIngredientLinkData)
-//   }
-//   catch (error) {
-//     Pop.error(error, `Could not create ingredient: ${editableIngredientData.value.quantity} ${editableIngredientData.value.name}`);
-//     logger.error(`Could not create ingredient: ${editableIngredientData.value.quantity} ${editableIngredientData.value.name}`.toUpperCase(), error)
-//   }
-// }
+    await createRecipeIngredientLinks(createdIngredients)
+
+  }
+  catch (error) {
+    Pop.error(error, "Could not create ingredients");
+    logger.error("Could not create ingredients".toUpperCase(), error)
+  }
+}
 
 async function createRecipe() {
   try {
     await recipesService.create(editableRecipeData.value)
+    await createIngredients()
+    resetEditableRecipeData()
   }
   catch (error) {
     Pop.error(error, `Could not create recipe `);
+    logger.error(`Could not create recipe ${editableRecipeData.value.name}`.toUpperCase(), error)
+  }
+}
+
+async function createRecipeIngredientLinks(createdIngredients) {
+  try {
+    debugger
+    const recipeIngredientLinkData = []
+    // NOTE REMEMBER TO CHANGE THE RECIPE CHECK IN SERVER | INGREDIENTSSERVICE.CREATE() TO USE RECIPEID INSTEAD OF ORIGINRECIPEID (OR ATLEAST THINK ABOUT IF IT'S NECESSARY?)
+    createdIngredients.forEach(createdIngredient => {
+      let recipeIngredientLink = {}
+
+      recipeIngredientLink.recipeId = createdRecipe.value.id,
+        recipeIngredientLink.ingredientId = createdIngredient.id
+
+      recipeIngredientLinkData.push(recipeIngredientLink)
+    })
+    await recipeIngredientLinksService.create(recipeIngredientLinkData)
+  }
+  catch (error) {
+    Pop.error(error, "Could not create recipe ingredient links");
+    logger.error("Could not create recipe ingredient links", error)
   }
 }
 
 function newIngredientToggle() {
   AppState.newIngredient = !AppState.newIngredient
+
   logger.log("newIngredientToggle is now ", newIngredient)
 }
 
 function removeIngredientFromCreateList(ingredientToRemove) {
   const ingredientIndex = AppState.ingredientsToCreate.findIndex(ingredient => ingredient.name == ingredientToRemove.name)
   AppState.ingredientsToCreate.splice(ingredientIndex, 1)
+}
+
+function resetEditableRecipeData() {
+  editableRecipeData.value = {
+    name: "",
+    instructions: "",
+    img: "",
+    category: "",
+  }
 }
 
 </script>
@@ -105,8 +139,8 @@ function removeIngredientFromCreateList(ingredientToRemove) {
     </div>
     <button @click="newIngredientToggle()" v-if="!newIngredient">Add
       Ingredient</button>
-    <!-- NOTE Check with Cameron to see if he thinks there would be a problem with having input fields without a form (best practices, ADA, etc.) -->
-    <IngredientInput v-if="newIngredient"></IngredientInput>
+    <IngredientInput v-if="newIngredient" :recipeProp="createdRecipe">
+    </IngredientInput>
   </section>
 </template>
 

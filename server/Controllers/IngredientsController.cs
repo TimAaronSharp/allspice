@@ -23,7 +23,7 @@ public class IngredientsController : ControllerBase
 
   [Authorize]
   [HttpPost]
-  public async Task<ActionResult<Ingredient>> Create([FromBody] Ingredient ingredientData)
+  public async Task<ActionResult<List<Ingredient>>> Create([FromBody] List<Ingredient> ingredientData)
   {
     try
     {

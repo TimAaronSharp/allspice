@@ -9,6 +9,7 @@ class RecipesService{
   async create(recipeData) {
     const res = await api.post("api/recipes", recipeData)
     logger.log("recipesService.create() returned ", res.data)
+    return this.makeRecipes(res.data)
   }
   
   // NOTE 🧺 Get all recipes request to the server.
