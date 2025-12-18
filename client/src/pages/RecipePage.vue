@@ -1,6 +1,7 @@
 <script setup>
 import { AppState } from '@/AppState.js';
 import { Recipe } from '@/models/Recipe.js';
+import { favoritesService } from '@/services/FavoritesService.js';
 import { ingredientsService } from '@/services/IngredientsService.js';
 import { recipeIngredientLinksService } from '@/services/RecipeIngredientLinksService.js';
 import { recipesService } from '@/services/RecipesService.js';
@@ -14,16 +15,43 @@ const recipe = computed(() => AppState.activeRecipe)
 const ingredients = computed(() => AppState.ingredients)
 const route = useRoute()
 const router = useRouter()
+const favorite = computed(() => AppState.activeFavorite)
+
+const recipeId = Number(route.params.recipeId)
 
 onMounted(() => {
   getRecipeById()
 })
 
+async function createFavorite() {
+  try {
+    debugger
+    const favoriteData = {
+      recipeId: recipeId,
+      accountId: null
+    }
+    // logger.log("recipeId is ", recipeId)
+    await favoritesService.create(favoriteData)
+  }
+  catch (error) {
+    Pop.error(error,);
+  }
+}
 
+async function deleteFavorite() {
+  try {
+    // temporarily empty
+    // await favoritesService.delete(favorite.value.id)
+  }
+  catch (error) {
+    Pop.error(error);
+  }
+}
 
 async function getRecipeById() {
   try {
     await recipesService.getById(route.params.recipeId)
+    logger.log("recipe is ", recipe.value)
     getRecipeIngredientsByRecipeId(route.params.recipeId)
   }
   catch (error) {
@@ -56,6 +84,10 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
           </div>
           <div class="recipe-data">
             <h1>{{ recipe?.name }}</h1>
+            <button v-if="account && favorite?.recipeId == recipeId" @click="deleteFavorite()"
+              class="mdi mdi-heart text-red transparent-btn-style"></button>
+            <button v-if="account" @click="createFavorite()"
+              class="mdi mdi-heart-outline transparent-btn-style"></button>
             <p>{{ recipe?.category[0].toUpperCase() + recipe?.category.slice(1) }}</p>
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->
