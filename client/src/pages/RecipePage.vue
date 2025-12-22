@@ -16,25 +16,23 @@ const ingredients = computed(() => AppState.ingredients)
 const route = useRoute()
 const router = useRouter()
 const favorite = computed(() => AppState.activeFavorite)
-
 const recipeId = Number(route.params.recipeId)
 
 onMounted(() => {
   getRecipeById()
 })
 
+// NOTE 🛠️ Create favorite function. Creating object with only the recipe id so that when sent to FavoritesController ASP.NET can parse as a JSON object (primitives like ints will give a 415 Unsupported Media Type error). AccountId will be assigned in controller.
 async function createFavorite() {
   try {
-    debugger
     const favoriteData = {
-      recipeId: recipeId,
-      accountId: null
+      recipeId: recipeId
     }
-    // logger.log("recipeId is ", recipeId)
     await favoritesService.create(favoriteData)
   }
   catch (error) {
-    Pop.error(error,);
+    Pop.error(error, "Could not favorite recipe.");
+    logger.error("Could not favorite the recipe (create new favorite).".toUpperCase())
   }
 }
 
