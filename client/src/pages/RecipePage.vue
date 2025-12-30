@@ -1,13 +1,10 @@
 <script setup>
 import { AppState } from '@/AppState.js';
-import { Recipe } from '@/models/Recipe.js';
 import { favoritesService } from '@/services/FavoritesService.js';
-import { ingredientsService } from '@/services/IngredientsService.js';
-import { recipeIngredientLinksService } from '@/services/RecipeIngredientLinksService.js';
 import { recipesService } from '@/services/RecipesService.js';
 import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const account = computed(() => AppState.account)
@@ -21,16 +18,14 @@ const recipeId = Number(route.params.recipeId)
 // NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
 const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
 
+// NOTE getFavorite() is called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then getFavorite() will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
 onMounted(() => {
+  clearRecipeInfo()
   getRecipeById()
   getFavorite()
 })
-clearRecipeInfo()
 
 watch(account, getFavorite)
-// if (account.value) {
-//   getFavorite()
-// }
 
 function clearRecipeInfo() {
   AppState.activeRecipe = null
@@ -45,6 +40,7 @@ async function createFavorite() {
       recipeId: recipeId
     }
     await favoritesService.create(favoriteData)
+    // logger.log("AppState.activeFavorite is after create", AppState.activeFavorite)
   }
   catch (error) {
     Pop.error(error, "Could not favorite recipe.");
@@ -64,8 +60,6 @@ async function deleteFavorite() {
 // NOTE Try handling the account stuff only on the server side (Also maybe do an if() for whether or not userInfo is found?)
 async function getFavorite() {
   try {
-    // debugger
-
     if (account.value) {
       await favoritesService.getFavorite(route.params.recipeId)
     }

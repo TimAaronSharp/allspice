@@ -22,7 +22,9 @@ public class FavoritesRepository
     SELECT @RecipeId, @AccountId
     WHERE NOT EXISTS (
       SELECT 1 FROM allspice_favorites
-      WHERE recipe_id = @RecipeId AND account_id = @AccountId);";
+      WHERE recipe_id = @RecipeId AND account_id = @AccountId);
+      
+    SELECT * FROM allspice_favorites WHERE id = LAST_INSERT_ID();";
 
     Favorite createdFavorite = _db.Query<Favorite>(sql, favoriteData).SingleOrDefault();
     return createdFavorite;
