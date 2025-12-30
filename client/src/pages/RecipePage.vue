@@ -18,14 +18,14 @@ const recipeId = Number(route.params.recipeId)
 // NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
 const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
 
-// NOTE getFavorite() is called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then getFavorite() will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
+// NOTE getFavoriteByRecipeIdAndAccountId() is called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then getFavoriteByRecipeIdAndAccountId() will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
 onMounted(() => {
   clearRecipeInfo()
   getRecipeById()
-  getFavorite()
+  getFavoriteByRecipeIdAndAccountId()
 })
 
-watch(account, getFavorite)
+watch(account, getFavoriteByRecipeIdAndAccountId)
 
 function clearRecipeInfo() {
   AppState.activeRecipe = null
@@ -50,18 +50,22 @@ async function createFavorite() {
 
 async function deleteFavorite() {
   try {
-    // temporarily empty
-    // await favoritesService.delete(favorite.value.id)
+    // const confirmed = await Pop.confirm(`Remove "${recipe.value.name}" from your favorites?`, "No", "Yes")
+    // if (confirmed) {
+    // debugger
+    await favoritesService.delete(favorite.value.id)
+    Pop.toast(`${recipe.value.name} removed from favorites.`)
+    // }
   }
   catch (error) {
     Pop.error(error);
   }
 }
 // NOTE Try handling the account stuff only on the server side (Also maybe do an if() for whether or not userInfo is found?)
-async function getFavorite() {
+async function getFavoriteByRecipeIdAndAccountId() {
   try {
     if (account.value) {
-      await favoritesService.getFavorite(route.params.recipeId)
+      await favoritesService.getFavoriteByRecipeIdAndAccountId(route.params.recipeId)
     }
     logger.log("AppState.activeFavorite is ", AppState.activeFavorite)
   }
