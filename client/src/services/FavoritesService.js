@@ -14,8 +14,17 @@ class FavoritesService{
     logger.log("AppState.activeFavorite is now ", AppState.activeFavorite)
   }
 
+  async getFavorite(recipeId){
+    const res = await api.get(`api/favorites/recipes/${recipeId}`)
+    logger.log("getFavorite() returned ", res.data)
+    this.makeFavorites(res.data)
+  }
+
   // NOTE I believe this may not be creating Favorites correctly. Check out later.
   makeFavorites(favoriteData){
+    if (favoriteData == null || favoriteData == "") {
+      return
+    }
     if (Array.isArray(favoriteData)) {
       return AppState.favorites = favoriteData.map(pojo => new Favorite(pojo))
     }

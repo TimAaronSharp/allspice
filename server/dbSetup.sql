@@ -90,6 +90,9 @@ CREATE TABLE allspice_favorites (
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
 )
 
+ALTER TABLE allspice_favorites
+ADD UNIQUE KEY uq_recipe_account_ids (recipe_id, account_id)
+
 DROP TABLE allspice_favorites
 
 -- allspice_favorites END

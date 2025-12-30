@@ -16,9 +16,9 @@ class RecipesService{
   async getAll(){
     AppState.recipes = []
     const res = await api.get('api/recipes')
-    logger.log("getAll returned ", res.data)
+    // logger.log("getAll returned ", res.data)
     this.makeRecipes(res.data)
-    logger.log("AppState.recipes is now ", AppState.recipes)
+    // logger.log("AppState.recipes is now ", AppState.recipes)
   }
 
   // NOTE 🔍 Get recipe by id request to the server.

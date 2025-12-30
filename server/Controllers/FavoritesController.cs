@@ -52,4 +52,32 @@ public class FavoritesController : ControllerBase
       return BadRequest(exception.Message);
     }
   }
+
+  // NOTE 🔍 Get Favorite
+
+  [HttpGet("recipes/{recipeId}")]
+  public async Task<ActionResult<Favorite>> GetByRecipeIdAndAccountId(int recipeId)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+
+      if (userInfo == null)
+      {
+        return Ok();
+      }
+
+      Favorite favoriteData = new Favorite()
+      {
+        RecipeId = recipeId,
+        AccountId = userInfo.Id
+      };
+
+      return Ok(_favoritesService.GetByRecipeIdAndAccountId(favoriteData));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }

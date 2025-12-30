@@ -7,7 +7,7 @@ import { recipeIngredientLinksService } from '@/services/RecipeIngredientLinksSe
 import { recipesService } from '@/services/RecipesService.js';
 import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const account = computed(() => AppState.account)
@@ -18,9 +18,25 @@ const router = useRouter()
 const favorite = computed(() => AppState.activeFavorite)
 const recipeId = Number(route.params.recipeId)
 
+// NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
+const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
+
 onMounted(() => {
   getRecipeById()
+  getFavorite()
 })
+clearRecipeInfo()
+
+watch(account, getFavorite)
+// if (account.value) {
+//   getFavorite()
+// }
+
+function clearRecipeInfo() {
+  AppState.activeRecipe = null
+  AppState.activeFavorite = null
+  AppState.ingredients = []
+}
 
 // NOTE 🛠️ Create favorite function. Creating object with only the recipe id so that when sent to FavoritesController ASP.NET can parse as a JSON object (primitives like ints will give a 415 Unsupported Media Type error). AccountId will be assigned in controller.
 async function createFavorite() {
@@ -45,11 +61,26 @@ async function deleteFavorite() {
     Pop.error(error);
   }
 }
+// NOTE Try handling the account stuff only on the server side (Also maybe do an if() for whether or not userInfo is found?)
+async function getFavorite() {
+  try {
+    // debugger
+
+    if (account.value) {
+      await favoritesService.getFavorite(route.params.recipeId)
+    }
+    logger.log("AppState.activeFavorite is ", AppState.activeFavorite)
+  }
+  catch (error) {
+    Pop.error(error, "Could not get favorite recipe information");
+    logger.error("Could not check for and get favorite".toUpperCase())
+  }
+}
 
 async function getRecipeById() {
   try {
+    // debugger
     await recipesService.getById(route.params.recipeId)
-    logger.log("recipe is ", recipe.value)
     getRecipeIngredientsByRecipeId(route.params.recipeId)
   }
   catch (error) {
@@ -84,9 +115,9 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
             <h1>{{ recipe?.name }}</h1>
             <button v-if="account && favorite?.recipeId == recipeId" @click="deleteFavorite()"
               class="mdi mdi-heart text-red transparent-btn-style"></button>
-            <button v-if="account" @click="createFavorite()"
+            <button v-else-if="account && favorite?.recipeId != recipeId" @click="createFavorite()"
               class="mdi mdi-heart-outline transparent-btn-style"></button>
-            <p>{{ recipe?.category[0].toUpperCase() + recipe?.category.slice(1) }}</p>
+            <p>{{ recipeCategory }}</p>
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->
 
