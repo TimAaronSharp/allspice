@@ -15,7 +15,7 @@ public class FavoritesService
 
   // NOTE 🛠️ Create favorite method. Passes favoriteData to repo for creation in database.
 
-  public FavoriteRecipe Create(Favorite favoriteData)
+  public Favorite Create(Favorite favoriteData)
   {
     return _repo.Create(favoriteData);
   }
@@ -55,5 +55,10 @@ public class FavoritesService
   public List<FavoriteRecipe> GetFavoriteRecipesByAccountId(string userInfoId)
   {
     return _repo.GetFavoriteRecipesByAccountId(userInfoId);
+  }
+
+  public Favorite GetByRecipeIdAndAccountId(Favorite favoriteData)
+  {
+    return _repo.GetByRecipeIdAndAccountId(favoriteData);
   }
 }

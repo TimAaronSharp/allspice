@@ -30,22 +30,6 @@ CREATE TABLE allspice_recipes (
 
 ALTER TABLE allspice_recipes RENAME COLUMN title TO name;
 
-INSERT INTO
-    allspice_recipes (
-        title,
-        instructions,
-        img,
-        category,
-        creator_id
-    )
-VALUES (
-        'Test title',
-        'Test instructions',
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg/1200px-Good_Food_Display_-_NCI_Visuals_Online.jpg',
-        'dinner',
-        '67e3273fee37d52171a8018c'
-    )
-
 DROP TABLE allspice_recipes
 -- allspice_recipes END
 
@@ -60,14 +44,6 @@ CREATE TABLE allspice_ingredients (
     origin_recipe_id INT NOT NULL,
     UNIQUE KEY uq_ingredient_name_quantity (name, quantity)
 )
-
-INSERT INTO
-    allspice_ingredients (name, quantity, recipe_id)
-VALUES ('Sugar', '1 Cup', 1)
-ON DUPLICATE KEY UPDATE
-    id = LAST_INSERT_ID(id);
-
-SELECT LAST_INSERT_ID();
 
 DROP TABLE allspice_ingredients
 
@@ -113,6 +89,9 @@ CREATE TABLE allspice_favorites (
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE,
     FOREIGN KEY (recipe_id) REFERENCES allspice_recipes (id) ON DELETE CASCADE
 )
+
+ALTER TABLE allspice_favorites
+ADD UNIQUE KEY uq_recipe_account_ids (recipe_id, account_id)
 
 DROP TABLE allspice_favorites
 

@@ -8,5 +8,11 @@
       "name": "server",
       "path": "server"
     }
-  ]
+  ],
+  "settings": {
+    "cSpell.words": [
+      "favorited",
+      "unfavorited"
+    ]
+  }
 }

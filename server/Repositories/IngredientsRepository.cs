@@ -21,6 +21,7 @@ public class IngredientsRepository
   public List<Ingredient> Create(List<Ingredient> ingredientData)
   {
     // NOTE Returns an empty list instead of erroring out.
+    // FIXME Test is this is really necessary and if it is, it should go in the service.
     if (ingredientData == null || ingredientData.Count == 0)
     {
       return new List<Ingredient>();

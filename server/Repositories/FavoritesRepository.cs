@@ -14,29 +14,20 @@ public class FavoritesRepository
   }
 
   // NOTE 🛠️ Create favorite method. Creates a new favorite in the database. Returns a FavoriteRecipe object (DTO) because a Favorite object does not contain all needed data itself.
-
-  public FavoriteRecipe Create(Favorite favoriteData)
+  // NOTE MAKE DUPLICATE PROOF!!! (Creates the favorite but is returning null for some reason)
+  public Favorite Create(Favorite favoriteData)
   {
     string sql = @"
-    INSERT INTO
-    allspice_favorites(recipe_id, account_id)
-    VALUES(@RecipeId, @AccountId);
-    
-    SELECT
-    allspice_favorites.*,
-    allspice_recipes.*,
-    accounts.*
-    FROM allspice_favorites
-    INNER JOIN allspice_recipes ON allspice_recipes.id = allspice_favorites.recipe_id
-    INNER JOIN accounts ON accounts.id = allspice_favorites.account_id
-    WHERE allspice_favorites.id = LAST_INSERT_ID();";
+    INSERT INTO allspice_favorites (recipe_id, account_id)
+    SELECT @RecipeId, @AccountId
+    WHERE NOT EXISTS (
+      SELECT 1 FROM allspice_favorites
+      WHERE recipe_id = @RecipeId AND account_id = @AccountId);
+      
+    SELECT * FROM allspice_favorites WHERE id = LAST_INSERT_ID();";
 
-    return _db.Query(sql, (Favorite favorite, FavoriteRecipe favoriteRecipe, Profile account) =>
-    {
-      favoriteRecipe.Creator = account;
-      favoriteRecipe.FavoriteId = favorite.Id;
-      return favoriteRecipe;
-    }, favoriteData).SingleOrDefault();
+    Favorite createdFavorite = _db.Query<Favorite>(sql, favoriteData).SingleOrDefault();
+    return createdFavorite;
   }
 
   // NOTE 💣 Delete favorite method. Deletes favorite from database.
@@ -83,4 +74,15 @@ public class FavoritesRepository
       return favoriteRecipe;
     }, new { userInfoId }).ToList();
   }
+
+  public Favorite GetByRecipeIdAndAccountId(Favorite favoriteData)
+  {
+    string sql = @"
+    SELECT * FROM allspice_favorites 
+      WHERE allspice_favorites.recipe_id = @RecipeId 
+      AND allspice_favorites.account_id = @AccountId;";
+
+    return _db.Query<Favorite>(sql, favoriteData).SingleOrDefault();
+  }
 }
+
