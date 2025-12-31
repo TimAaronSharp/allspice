@@ -38,9 +38,9 @@ class FavoritesService{
     }
     return AppState.activeFavorite = new Favorite(favoriteData)
   }
-  // NOTE ☠️ Method to remove a favorite from AppState.favorites/activeFavorite when a recipe is unfavorited (deleted).
+  // NOTE 🗑️ Method to remove a favorite from AppState.favorites/activeFavorite when a recipe is unfavorited (deleted).
   unMakeFavorites(favoriteId){
-    if (AppState.favorites != []) {
+    if (AppState.favorites.length > 0) {
       const favoriteIndex = AppState.favorites.findIndex(favorite => favorite.id == favoriteId)
       AppState.favorites.splice(favoriteIndex, 1)
     }
