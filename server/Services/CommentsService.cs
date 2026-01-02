@@ -8,4 +8,9 @@ public class CommentsService
   {
     _repo = repo;
   }
+
+  public Comment Create(Comment commentData)
+  {
+    return _repo.Create(commentData);
+  }
 }

@@ -22,6 +22,10 @@ export const AppState = reactive({
   activeFavorite: null,
   ingredientsToCreate:[],
   newIngredient: false,
-  categories:[]
+  categories:[],
+  /** @type {import('./models/Comment.js').Comment[]} comments from the database*/
+  comments:[],
+  /** @type {import('./models/Comment.js').Comment} comments from the database*/
+  activeComment: null
 })
 
