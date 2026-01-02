@@ -5,5 +5,10 @@ namespace allspice.Controllers;
 
 public class CommentsController : ControllerBase
 {
+  private readonly CommentsService _commentsService;
 
+  public CommentsController(CommentsService commentsService)
+  {
+    _commentsService = commentsService;
+  }
 }
