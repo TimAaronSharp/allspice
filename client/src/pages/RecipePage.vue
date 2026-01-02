@@ -6,6 +6,8 @@ import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
 import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentForm.js'
+import CreateCommentForm from '@/components/CreateCommentForm.vue';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -15,6 +17,8 @@ const router = useRouter()
 const favorite = computed(() => AppState.activeFavorite)
 const recipeId = Number(route.params.recipeId)
 
+const createCommentFormToggle = computed(() => AppState.createCommentFormToggle)
+
 // NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
 const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
 
@@ -23,6 +27,7 @@ onMounted(() => {
   clearRecipeInfo()
   getRecipeById()
   getFavoriteByRecipeIdAndAccountId()
+  AppState.createCommentFormToggle = false
 })
 
 watch(account, getFavoriteByRecipeIdAndAccountId)
@@ -130,6 +135,15 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
         <hr>
         <h4>Instructions:</h4>
         <p>{{ recipe?.instructions }}</p>
+      </div>
+    </div>
+    <div>
+      <h4>Comments:</h4>
+      <div v-if="account">
+        <button @click="toggleCreateCommentForm()" v-if="!createCommentFormToggle"
+          class="mdi mdi-plus-circle btn btn-outline-secondary">
+          Comment</button>
+        <CreateCommentForm v-if="createCommentFormToggle" :recipeProp="recipe" />
       </div>
     </div>
   </section>

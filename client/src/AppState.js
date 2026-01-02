@@ -26,6 +26,7 @@ export const AppState = reactive({
   /** @type {import('./models/Comment.js').Comment[]} comments from the database*/
   comments:[],
   /** @type {import('./models/Comment.js').Comment} comments from the database*/
-  activeComment: null
+  activeComment: null,
+  createCommentFormToggle: false
 })
 

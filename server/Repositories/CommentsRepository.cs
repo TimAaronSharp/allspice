@@ -13,10 +13,10 @@ public class CommentsRepository
   {
     string sql = @"
     INSERT INTO
-    allspice_comments(body, creator_id)
-    VALUES(@Body, @CreatorId);
+    allspice_recipe_comments(body, recipe_id, creator_id)
+    VALUES(@Body, @RecipeId, @CreatorId);
     
-    SELECT * FROM allspice_comments WHERE id = LAST_INSERT_ID();";
+    SELECT * FROM allspice_recipe_comments WHERE id = LAST_INSERT_ID();";
 
     return _db.Query<Comment>(sql, commentData).SingleOrDefault();
   }
