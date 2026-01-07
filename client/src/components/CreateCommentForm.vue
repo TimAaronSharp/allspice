@@ -5,6 +5,7 @@ import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentFor
 import { logger } from '@/utils/Logger.js';
 import { commentsService } from '@/services/CommentsService.js';
 import { Recipe } from '@/models/Recipe.js';
+import { validateForm } from '@/composables/useValidateForm.js';
 
 const props = defineProps({
   recipeProp: { type: Recipe, required: true }
@@ -18,6 +19,7 @@ const editableCommentData = ref({
 async function createComment() {
   try {
     debugger
+    validateForm("create-comment-form")
     await commentsService.create(editableCommentData.value)
     editableCommentData.value.body = ""
     toggleCreateCommentForm()
@@ -32,8 +34,8 @@ async function createComment() {
 
 
 <template>
-  <form @submit.prevent="createComment()">
-    <label for="comment-body" class="form-label">Comment:</label>
+  <form @submit.prevent="createComment()" id="create-comment-form">
+    <label for="comment-body-field" class="form-label">Comment:</label>
     <textarea v-model="editableCommentData.body" name="comment-body" id="comment-body-field"></textarea>
     <div>
       <button type="submit" class="btn btn-outline-primary">Post</button>
