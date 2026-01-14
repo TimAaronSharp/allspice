@@ -1,6 +1,6 @@
 <script setup>
 import { Pop } from '@/utils/Pop.js';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentForm.js'
 import { logger } from '@/utils/Logger.js';
 import { commentsService } from '@/services/CommentsService.js';
@@ -16,10 +16,13 @@ const editableCommentData = ref({
   recipeId: props.recipeProp.id
 })
 
-async function createComment() {
+async function createComment(event) {
   try {
     debugger
-    validateForm("create-comment-form")
+    const validatedForm = validateForm(event)
+    if (validatedForm.value === '') {
+      return
+    }
     await commentsService.create(editableCommentData.value)
     editableCommentData.value.body = ""
     toggleCreateCommentForm()
@@ -34,12 +37,12 @@ async function createComment() {
 
 
 <template>
-  <form @submit.prevent="createComment()" id="create-comment-form">
+  <form @submit.prevent="createComment($event)" id="create-comment-form">
     <label for="comment-body-field" class="form-label">Comment:</label>
     <textarea v-model="editableCommentData.body" name="comment-body" id="comment-body-field"></textarea>
     <div>
       <button type="submit" class="btn btn-outline-primary">Post</button>
-      <button class="btn btn-outline-danger">Cancel</button>
+      <button type="button" @click="toggleCreateCommentForm()" class="btn btn-outline-danger">Cancel</button>
     </div>
   </form>
 </template>
