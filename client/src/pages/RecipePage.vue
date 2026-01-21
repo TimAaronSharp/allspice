@@ -8,6 +8,7 @@ import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentForm.js'
 import CreateCommentForm from '@/components/CreateCommentForm.vue';
+import { commentsService } from '@/services/CommentsService.js';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -16,6 +17,7 @@ const route = useRoute()
 const router = useRouter()
 const favorite = computed(() => AppState.activeFavorite)
 const recipeId = Number(route.params.recipeId)
+const comments = computed(() => AppState.comments)
 
 const createCommentFormToggle = computed(() => AppState.createCommentFormToggle)
 
@@ -66,6 +68,19 @@ async function deleteFavorite() {
     Pop.error(error);
   }
 }
+
+async function getCommentsByRecipeId() {
+  try {
+    await commentsService.getByRecipeId(route.params.recipeId);
+    if (comments.value) {
+      logger.log("Computed comments are ", comments.value)
+    }
+  }
+  catch (error) {
+    Pop.error(error, "Could not get comments for recipe.");
+    logger.error("Could not get comments for recipe.".toUpperCase(), error);
+  }
+}
 // NOTE Try handling the account stuff only on the server side (Also maybe do an if() for whether or not userInfo is found?)
 async function getFavoriteByRecipeIdAndAccountId() {
   try {
@@ -85,6 +100,7 @@ async function getRecipeById() {
     // debugger
     await recipesService.getById(route.params.recipeId)
     getRecipeIngredientsByRecipeId(route.params.recipeId)
+    getCommentsByRecipeId()
   }
   catch (error) {
     Pop.error(error, "Could not get recipe by id");
@@ -144,6 +160,13 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
           class="mdi mdi-plus-circle btn btn-outline-secondary">
           Comment</button>
         <CreateCommentForm v-if="createCommentFormToggle" :recipeProp="recipe" />
+      </div>
+      <div>
+        <div v-for="comment in comments" class="d-flex" :key="'Comment ' + comment?.id">
+          <img :src="comment?.creator.picture" :alt="comment?.creator?.name + `'s profile picture.'`">
+          <p>{{ comment?.creator?.name }}</p>
+          <p> {{ comment?.body }}</p>
+        </div>
       </div>
     </div>
   </section>

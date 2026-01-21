@@ -20,4 +20,21 @@ public class CommentsRepository
 
     return _db.Query<Comment>(sql, commentData).SingleOrDefault();
   }
+
+  public List<Comment> GetByRecipeId(int recipeId)
+  {
+    string sql = @"
+    SELECT
+    allspice_recipe_comments.*,
+    accounts.*
+    FROM allspice_recipe_comments
+    INNER JOIN accounts ON allspice_recipe_comments.creator_id = accounts.id
+    WHERE allspice_recipe_comments.recipe_id = @recipeId;";
+
+    return _db.Query(sql, (Comment comment, Profile account) =>
+    {
+      comment.Creator = account;
+      return comment;
+    }, new { recipeId }).ToList();
+  }
 }

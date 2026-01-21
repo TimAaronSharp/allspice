@@ -5,12 +5,19 @@ import { Comment } from "@/models/Comment.js"
 
 
 class CommentsService{
-async create(commentData){
-  AppState.activeComment = null
-  const res = await api.post("api/comments", commentData)
-  logger.log ("CommentsService.create() returned ", res.data)
-  this.makeComments(commentData);
-  }
+  async create(commentData){
+    AppState.activeComment = null
+    const res = await api.post("api/comments", commentData)
+    logger.log ("CommentsService.create() returned ", res.data)
+    this.makeComments(commentData);
+    }
+
+  async getByRecipeId(recipeId){
+  AppState.comments = []
+  const res = await api.get(`api/recipes/${recipeId}/comments`)
+  logger.log("CommentsService.getByRecipeId() returned ", res.data)
+  this.makeComments(res.data)
+    }
 
   makeComments(commentData){
     if (commentData == null || commentData == "") {

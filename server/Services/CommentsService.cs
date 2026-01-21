@@ -13,4 +13,9 @@ public class CommentsService
   {
     return _repo.Create(commentData);
   }
+
+  public List<Comment> GetByRecipeId(int recipeId)
+  {
+    return _repo.GetByRecipeId(recipeId);
+  }
 }
