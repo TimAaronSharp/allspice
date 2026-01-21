@@ -11,7 +11,7 @@ const formElem = event.target
         event.preventDefault();
         Pop.toast('A comment cannot be only whitespace. Please enter a comment to post.')
         input.focus()
-        return input
+        return input.value.trim()
       }
     }
     if (!formElem.checkValidity()) {

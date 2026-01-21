@@ -18,9 +18,10 @@ const editableCommentData = ref({
 
 async function createComment(event) {
   try {
-    debugger
+    // debugger
     const validatedForm = validateForm(event)
-    if (validatedForm.value === '') {
+    // debugger
+    if (validatedForm === "") {
       return
     }
     await commentsService.create(editableCommentData.value)
