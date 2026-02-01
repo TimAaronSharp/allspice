@@ -12,4 +12,20 @@ public class RecipeNotesController : ControllerBase
     _recipeNotesService = recipeNotesService;
     _auth0Provider = auth0Provider;
   }
+
+  [Authorize]
+  [HttpPost]
+  public async Task<ActionResult<RecipeNote>> Create([FromBody] RecipeNote recipeNoteData)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      recipeNoteData.CreatorId = userInfo.Id;
+      return Ok(_recipeNotesService.Create(recipeNoteData));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }

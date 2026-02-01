@@ -8,4 +8,9 @@ public class RecipeNotesService
   {
     _repo = repo;
   }
+
+  public RecipeNote Create(RecipeNote recipeNoteData)
+  {
+    return _repo.Create(recipeNoteData);
+  }
 }
