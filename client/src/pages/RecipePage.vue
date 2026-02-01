@@ -9,6 +9,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentForm.js'
 import CreateCommentForm from '@/components/CreateCommentForm.vue';
 import { commentsService } from '@/services/CommentsService.js';
+import CreateRecipeNoteForm from '@/components/CreateRecipeNoteForm.vue';
+import { toggleCreateRecipeNoteForm } from '@/composables/useToggleCreateRecipeNoteForm.js';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -20,6 +22,7 @@ const recipeId = Number(route.params.recipeId)
 const comments = computed(() => AppState.comments)
 
 const createCommentFormToggle = computed(() => AppState.createCommentFormToggle)
+const createRecipeNoteFormToggle = computed(() => AppState.createRecipeNoteFormToggle)
 
 // NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
 const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
@@ -139,8 +142,11 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
             <p>{{ recipeCategory }}</p>
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->
-
-
+            <div v-if="account">
+              <button @click="toggleCreateRecipeNoteForm()" v-if="!createRecipeNoteFormToggle"
+                class="mdi mdi-plus-circle btn btn-outline-secondary">Create Note</button>
+              <CreateRecipeNoteForm v-if="createRecipeNoteFormToggle"></CreateRecipeNoteForm>
+            </div>
             <p v-for="ingredient in ingredients" :key="'ingredient' + ingredient.id">
               {{ ingredient.quantity }} {{ ingredient.name }}
             </p>
