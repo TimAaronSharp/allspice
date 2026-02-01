@@ -145,7 +145,7 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
             <div v-if="account">
               <button @click="toggleCreateRecipeNoteForm()" v-if="!createRecipeNoteFormToggle"
                 class="mdi mdi-plus-circle btn btn-outline-secondary">Create Note</button>
-              <CreateRecipeNoteForm v-if="createRecipeNoteFormToggle"></CreateRecipeNoteForm>
+              <CreateRecipeNoteForm v-if="createRecipeNoteFormToggle" :recipeProp="recipe" />
             </div>
             <p v-for="ingredient in ingredients" :key="'ingredient' + ingredient.id">
               {{ ingredient.quantity }} {{ ingredient.name }}
