@@ -1,7 +1,7 @@
 import { logger } from "@/utils/Logger.js";
 import { Pop } from "@/utils/Pop.js";
 
-export function validateForm(event){
+export function validateWhiteSpace(event){
 const formElem = event.target
     /** @type {NodeListOf<HTMLInputElement | HTMLTextAreaElement>} */
     const inputs = formElem.querySelectorAll('input, textarea')
