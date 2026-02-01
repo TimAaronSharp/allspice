@@ -20,7 +20,7 @@ public class RecipeNotesController : ControllerBase
     try
     {
       Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      recipeNoteData.CreatorId = userInfo.Id;
+      recipeNoteData.AccountId = userInfo.Id;
       return Ok(_recipeNotesService.Create(recipeNoteData));
     }
     catch (Exception exception)

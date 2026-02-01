@@ -12,11 +12,11 @@ public class RecipeNotesRepository
   public RecipeNote Create(RecipeNote recipeNoteData)
   {
     string sql = @"
-    INSERT INTO allspice_recipe_notes (recipe_id, creator_id, body)
-    SELECT @RecipeId, @CreatorId, @Body
+    INSERT INTO allspice_recipe_notes (recipe_id, account_id, body)
+    SELECT @RecipeId, @AccountId, @Body
     WHERE NOT EXISTS (
       SELECT 1 FROM allspice_recipe_notes
-      WHERE recipe_id = @RecipeId AND creator_id = @CreatorId);
+      WHERE recipe_id = @RecipeId AND account_id = @AccountId);
       
     SELECT * FROM allspice_recipe_notes WHERE id = LAST_INSERT_ID();";
 

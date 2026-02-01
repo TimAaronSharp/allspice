@@ -9,13 +9,13 @@ export class RecipeNote extends DatabaseItem{
    * @property {Date} updatedAt
    * @property {number} recipeId
    * @property {string} body
-   * @property {string} creatorId
+   * @property {string} accountId
    * @param {RecipeNoteData} data 
    */
   constructor(data){
     super(data)
     this.recipeId = data.recipeId
     this.body = data.body
-    this.creatorId = data.creatorId
+    this.accountId = data.accountId
   }
 }
