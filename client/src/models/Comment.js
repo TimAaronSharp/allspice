@@ -9,6 +9,7 @@ export class Comment extends DatabaseItem{
    * @property {Date} createdAt
    * @property {Date} updatedAt
    * @property {string} body
+   * @property {number} recipeId
    * @property {string} creatorId
    * @property {Profile} creator
    * @param {CommentData} data 
@@ -16,6 +17,7 @@ export class Comment extends DatabaseItem{
   constructor(data){
     super(data)
     this.body = data.body
+    this.recipeId = data.recipeId
     this.creatorId = data.creatorId
     this.creator = data.creator
   }
