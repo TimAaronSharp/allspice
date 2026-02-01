@@ -2,6 +2,7 @@
 import { toggleCreateRecipeNoteForm } from '@/composables/useToggleCreateRecipeNoteForm.js';
 import { validateWhiteSpace } from '@/composables/useValidateWhiteSpace.js';
 import { Recipe } from '@/models/Recipe.js';
+import { recipeNotesService } from '@/services/RecipeNotesService.js';
 import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
 import { ref } from 'vue';

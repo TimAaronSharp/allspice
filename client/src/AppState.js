@@ -28,6 +28,8 @@ export const AppState = reactive({
   /** @type {import('./models/Comment.js').Comment} comments from the database*/
   activeComment: null,
   createCommentFormToggle: false,
-  createRecipeNoteFormToggle: false
+  createRecipeNoteFormToggle: false,
+  /** @type {import('./models/RecipeNote.js').RecipeNote} selected recipe note from the database*/
+  activeRecipeNote: null
 })
 

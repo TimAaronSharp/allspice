@@ -21,9 +21,7 @@ async function createComment(event) {
     // debugger
     const validatedForm = validateWhiteSpace(event)
     // debugger
-    if (validatedForm === "") {
-      return
-    }
+    if (validatedForm === "") return
     await commentsService.create(editableCommentData.value)
     editableCommentData.value.body = ""
     toggleCreateCommentForm()
