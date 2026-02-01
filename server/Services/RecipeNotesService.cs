@@ -13,4 +13,10 @@ public class RecipeNotesService
   {
     return _repo.Create(recipeNoteData);
   }
+
+  public RecipeNote GetByRecipeIdAndAccountId(int recipeId, string accountId)
+  {
+    RecipeNote recipeNote = _repo.GetByRecipeIdAndAccountId(recipeId, accountId);
+    return recipeNote;
+  }
 }

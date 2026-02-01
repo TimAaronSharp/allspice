@@ -22,4 +22,12 @@ public class RecipeNotesRepository
 
     return _db.Query<RecipeNote>(sql, recipeNoteData).SingleOrDefault();
   }
+
+  public RecipeNote GetByRecipeIdAndAccountId(int recipeId, string accountId)
+  {
+    string sql = @"
+    SELECT * FROM allspice_recipe_notes WHERE recipe_id = @RecipeId AND account_id = @AccountId;";
+
+    return _db.Query<RecipeNote>(sql, new { recipeId, accountId }).SingleOrDefault();
+  }
 }

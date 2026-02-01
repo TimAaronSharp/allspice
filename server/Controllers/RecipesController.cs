@@ -11,13 +11,15 @@ public class RecipesController : ControllerBase
   private readonly Auth0Provider _auth0Provider;
   private readonly RecipeIngredientLinksService _recipeIngredientLinksService;
   private readonly CommentsService _commentsService;
+  private readonly RecipeNotesService _recipeNotesService;
 
-  public RecipesController(RecipesService recipesService, Auth0Provider auth0Provider, RecipeIngredientLinksService recipeIngredientLinksService, CommentsService commentsService)
+  public RecipesController(RecipesService recipesService, Auth0Provider auth0Provider, RecipeIngredientLinksService recipeIngredientLinksService, CommentsService commentsService, RecipeNotesService recipeNotesService)
   {
     _recipesService = recipesService;
     _auth0Provider = auth0Provider;
     _recipeIngredientLinksService = recipeIngredientLinksService;
     _commentsService = commentsService;
+    _recipeNotesService = recipeNotesService;
   }
 
   [Authorize]
@@ -134,6 +136,21 @@ public class RecipesController : ControllerBase
     catch (Exception exception)
     {
 
+      return BadRequest(exception.Message);
+    }
+  }
+
+  [Authorize]
+  [HttpGet("{recipeId}/recipe-notes")]
+  public async Task<ActionResult<RecipeNote>> GetRecipeNotesByRecipeIdAndAccountId(int recipeId)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      return Ok(_recipeNotesService.GetByRecipeIdAndAccountId(recipeId, userInfo.Id));
+    }
+    catch (Exception exception)
+    {
       return BadRequest(exception.Message);
     }
   }
