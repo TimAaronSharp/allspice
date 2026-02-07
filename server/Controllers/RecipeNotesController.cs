@@ -30,7 +30,22 @@ public class RecipeNotesController : ControllerBase
   }
 
   [Authorize]
-  [HttpPut("{recipeId}")]
+  [HttpDelete("{recipeNoteId}")]
+  public async Task<ActionResult<string>> Delete(int recipeNoteId)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      return Ok(_recipeNotesService.Delete(recipeNoteId, userInfo));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
+
+  [Authorize]
+  [HttpPut("{recipeNoteId}")]
   public async Task<ActionResult<RecipeNote>> Edit([FromBody] RecipeNote editedRecipeNoteData)
   {
     try

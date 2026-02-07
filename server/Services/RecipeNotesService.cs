@@ -13,6 +13,21 @@ public class RecipeNotesService
   {
     return _repo.Create(recipeNoteData);
   }
+
+  public string Delete(int recipeNoteId, Profile userInfo)
+  {
+    RecipeNote recipeNoteToDelete = GetById(recipeNoteId);
+
+    if (recipeNoteToDelete.AccountId != userInfo.Id)
+    {
+      throw new Exception($"You cannot delete another user's recipe note, {userInfo.Name}".ToUpper());
+    }
+
+    _repo.Delete(recipeNoteId);
+    return $"Recipe note id :{recipeNoteId} has been deleted. You monster.";
+  }
+
+
   public RecipeNote Edit(RecipeNote editedRecipeNoteData, Profile userInfo)
   {
     RecipeNote recipeNoteToEdit = GetByRecipeIdAndAccountId(editedRecipeNoteData.RecipeId, editedRecipeNoteData.AccountId);
@@ -28,13 +43,13 @@ public class RecipeNotesService
     return recipeNoteToEdit;
   }
 
-  private RecipeNote GetById(int recipeId)
+  private RecipeNote GetById(int recipeNoteId)
   {
-    RecipeNote foundRecipeNote = _repo.GetById(recipeId);
+    RecipeNote foundRecipeNote = _repo.GetById(recipeNoteId);
 
     if (foundRecipeNote == null)
     {
-      throw new Exception($"Invalid recipe note id: {recipeId}");
+      throw new Exception($"Invalid recipe note id: {recipeNoteId}");
     }
 
     return foundRecipeNote;

@@ -73,15 +73,29 @@ async function createFavorite() {
 
 async function deleteFavorite() {
   try {
-    // const confirmed = await Pop.confirm(`Remove "${recipe.value.name}" from your favorites?`, "No", "Yes")
-    // if (confirmed) {
-    // debugger
-    await favoritesService.delete(favorite.value.id)
-    Pop.toast(`${recipe.value.name} removed from favorites.`)
-    // }
+    const confirmed = await Pop.confirm(`Remove "${recipe.value.name}" from your favorites?`, "", "Yes", "No")
+    if (confirmed) {
+      // debugger
+      await favoritesService.delete(favorite.value.id)
+      Pop.toast(`${recipe.value.name} removed from favorites.`)
+    }
   }
   catch (error) {
     Pop.error(error);
+  }
+}
+
+async function deleteRecipeNote() {
+  try {
+    // debugger
+    const confirmed = await Pop.confirm('Are you sure you want to delete this recipe note?', 'This action cannot be undone.', "Yes", "No")
+    if (confirmed) {
+      await recipeNotesService.delete(activeRecipeNote.value.id)
+    }
+  }
+  catch (error) {
+    Pop.error(error, "Could not delete recipe note.");
+    logger.error("Could not delete recipe note.".toUpperCase(), error)
   }
 }
 
@@ -188,6 +202,9 @@ function resetToggles() {
                 <EditRecipeNoteForm v-if="editRecipeNoteFormToggle" :recipeProp="recipe" />
                 <button v-if="!editRecipeNoteFormToggle" @click="toggleEditRecipeNoteForm()"
                   class="mdi mdi-pencil btn btn-outline-secondary">Edit
+                  Note</button>
+                <button v-if="!editRecipeNoteFormToggle" @click="deleteRecipeNote()"
+                  class="mdi mdi-close-circle btn btn-outline-danger">Delete
                   Note</button>
               </div>
             </div>

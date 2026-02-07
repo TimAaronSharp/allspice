@@ -23,6 +23,18 @@ public class RecipeNotesRepository
     return _db.Query<RecipeNote>(sql, recipeNoteData).SingleOrDefault();
   }
 
+  public void Delete(int recipeNoteId)
+  {
+    string sql = "DELETE FROM allspice_recipe_notes WHERE id = @recipeNoteId LIMIT 1;";
+
+    int rowsAffected = _db.Execute(sql, new { recipeNoteId });
+
+    if (rowsAffected != 1)
+    {
+      throw new Exception($"{rowsAffected} rows were deleted, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg.");
+    }
+  }
+
   public void Edit(RecipeNote editedRecipeNote)
   {
     string sql = @"
@@ -39,11 +51,11 @@ public class RecipeNotesRepository
     }
   }
 
-  public RecipeNote GetById(int recipeId)
+  public RecipeNote GetById(int recipeNoteId)
   {
-    string sql = "SELECT * FROM allspice_recipe_notes WHERE allspice_recipe_notes.recipe_id = @recipeId;";
+    string sql = "SELECT * FROM allspice_recipe_notes WHERE id = @recipeNoteId;";
 
-    return _db.Query<RecipeNote>(sql, new { recipeId }).SingleOrDefault();
+    return _db.Query<RecipeNote>(sql, new { recipeNoteId }).SingleOrDefault();
   }
 
   public RecipeNote GetByRecipeIdAndAccountId(int recipeId, string accountId)
