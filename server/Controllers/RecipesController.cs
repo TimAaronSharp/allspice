@@ -141,7 +141,7 @@ public class RecipesController : ControllerBase
   }
 
   [Authorize]
-  [HttpGet("{recipeId}/recipe-notes")]
+  [HttpGet("{recipeId}/recipeNotes")]
   public async Task<ActionResult<RecipeNote>> GetRecipeNotesByRecipeIdAndAccountId(int recipeId)
   {
     try

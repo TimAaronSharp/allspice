@@ -9,7 +9,7 @@ const formElem = event.target
     for(const input of inputs){
       if (input.value.trim() === '') {
         event.preventDefault();
-        Pop.toast('A comment cannot be only whitespace. Please enter a comment to post.')
+        Pop.toast('A field cannot be only whitespace. Please enter text to post.')
         input.focus()
         return input.value.trim()
       }

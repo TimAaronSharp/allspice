@@ -12,6 +12,8 @@ import { commentsService } from '@/services/CommentsService.js';
 import CreateRecipeNoteForm from '@/components/CreateRecipeNoteForm.vue';
 import { toggleCreateRecipeNoteForm } from '@/composables/useToggleCreateRecipeNoteForm.js';
 import { recipeNotesService } from '@/services/RecipeNotesService.js';
+import EditRecipeNoteForm from '@/components/EditRecipeNoteForm.vue';
+import { toggleEditRecipeNoteForm } from '@/composables/useToggleEditRecipeNoteForm.js';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -22,14 +24,17 @@ const favorite = computed(() => AppState.activeFavorite)
 const recipeId = Number(route.params.recipeId)
 const comments = computed(() => AppState.comments)
 const recipeNote = computed(() => AppState.activeRecipeNote)
+const activeRecipeNote = computed(() => AppState.activeRecipeNote)
 
 const createCommentFormToggle = computed(() => AppState.createCommentFormToggle)
 const createRecipeNoteFormToggle = computed(() => AppState.createRecipeNoteFormToggle)
+const editRecipeNoteFormToggle = computed(() => AppState.editRecipeNoteFormToggle)
+
 
 // NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
 const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
 
-// NOTE getFavoriteByRecipeIdAndAccountId() is called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then getFavoriteByRecipeIdAndAccountId() will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
+// NOTE getFavoriteByRecipeIdAndAccountId() and getRecipeNote() are called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then they will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
 onMounted(() => {
   clearRecipeInfo()
   resetToggles()
@@ -147,6 +152,7 @@ async function getRecipeNote() {
 function resetToggles() {
   AppState.createCommentFormToggle = false
   AppState.createRecipeNoteFormToggle = false
+  AppState.editRecipeNoteFormToggle = false
 }
 
 </script>
@@ -171,13 +177,18 @@ function resetToggles() {
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->
             <div v-if="account">
-              <button @click="toggleCreateRecipeNoteForm()"
-                v-if="!createRecipeNoteFormToggle && AppState.activeRecipeNote == null"
-                class="mdi mdi-plus-circle btn btn-outline-secondary">Create Note</button>
+              <div v-if="!createRecipeNoteFormToggle && activeRecipeNote == null">
+                <button @click="toggleCreateRecipeNoteForm()"
+                  class="mdi mdi-plus-circle btn btn-outline-secondary">Create Note</button>
+              </div>
               <CreateRecipeNoteForm v-if="createRecipeNoteFormToggle" :recipeProp="recipe" />
               <div v-if="recipeNote != null">
                 <h5>Recipe Notes:</h5>
-                <p>{{ recipeNote.body }}</p>
+                <p v-if="!editRecipeNoteFormToggle">{{ recipeNote.body }}</p>
+                <EditRecipeNoteForm v-if="editRecipeNoteFormToggle" :recipeProp="recipe" />
+                <button v-if="!editRecipeNoteFormToggle" @click="toggleEditRecipeNoteForm()"
+                  class="mdi mdi-pencil btn btn-outline-secondary">Edit
+                  Note</button>
               </div>
             </div>
             <p v-for="ingredient in ingredients" :key="'ingredient' + ingredient.id">

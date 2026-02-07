@@ -10,12 +10,21 @@ class RecipeNotesService {
     return this.makeRecipeNotes(res.data)
   }
 
+  async edit(editedRecipeNoteData){
+    const recipeId = editedRecipeNoteData.recipeId
+    const res = await api.put(`api/recipeNotes/${recipeId}`, editedRecipeNoteData)
+    // logger.log("RecipeNotesService.edit() returned ", res.data)
+    this.makeRecipeNotes(res.data)
+    // logger.log("makeRecipeNotes after edit() returned ", madeEditedRecipe)
+    this.getByRecipeIdAndAccountId(recipeId)
+  }
+
   async getByRecipeIdAndAccountId(recipeId){
     AppState.activeRecipeNote = null
-    const res = await api.get(`api/recipes/${recipeId}/recipe-notes`)
-    logger.log("getByRecipeIdAndAccountId() returned ", res.data)
-    const recipeNote = this.makeRecipeNotes(res.data)
-    logger.log("recipeNote was created as ", recipeNote)
+    const res = await api.get(`api/recipes/${recipeId}/recipeNotes`)
+    // logger.log("getByRecipeIdAndAccountId() returned ", res.data)
+    this.makeRecipeNotes(res.data)
+    // logger.log("recipeNote was created as ", recipeNote)
   }
 
   makeRecipeNotes(recipeNoteData){

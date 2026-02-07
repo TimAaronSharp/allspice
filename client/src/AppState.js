@@ -29,6 +29,7 @@ export const AppState = reactive({
   activeComment: null,
   createCommentFormToggle: false,
   createRecipeNoteFormToggle: false,
+  editRecipeNoteFormToggle: false,
   /** @type {import('./models/RecipeNote.js').RecipeNote} selected recipe note from the database*/
   activeRecipeNote: null
 })
