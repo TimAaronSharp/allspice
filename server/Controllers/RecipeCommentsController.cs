@@ -29,4 +29,19 @@ public class RecipeCommentsController : ControllerBase
       return BadRequest(exception.Message);
     }
   }
+
+  [Authorize]
+  [HttpDelete("{recipeCommentId}")]
+  public async Task<ActionResult<string>> Delete(int recipeCommentId)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      return Ok(_recipeCommentsService.Delete(recipeCommentId, userInfo));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }

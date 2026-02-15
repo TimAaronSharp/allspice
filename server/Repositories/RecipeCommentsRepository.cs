@@ -21,6 +21,25 @@ public class RecipeCommentsRepository
     return _db.Query<RecipeComment>(sql, recipeCommentData).SingleOrDefault();
   }
 
+  public void Delete(int recipeCommentId)
+  {
+    string sql = "DELETE FROM allspice_recipe_comments WHERE id = @recipeCommentId LIMIT 1;";
+
+    int rowsAffected = _db.Execute(sql, new { recipeCommentId });
+
+    if (rowsAffected != 1)
+    {
+      throw new Exception($"{rowsAffected} rows were deleted, which means your code is bad and you should feel bad. -Dr. Johnathan Alfred Zoidberg.");
+    }
+  }
+
+  public RecipeComment GetById(int recipeCommentId)
+  {
+    string sql = "SELECT * FROM allspice_recipe_comments WHERE id = @recipeCommentId;";
+
+    return _db.Query<RecipeComment>(sql, new { recipeCommentId }).SingleOrDefault();
+  }
+
   public List<RecipeComment> GetByRecipeId(int recipeId)
   {
     string sql = @"

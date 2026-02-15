@@ -12,6 +12,12 @@ class RecipeCommentsService{
     this.makeRecipeComments(recipeCommentData);
     }
 
+    async delete(recipeCommentId){
+      const res = await api.delete(`api/recipeComments/${recipeCommentId}`)
+      logger.log("RecipeCommentsService.delete() returned ", res.data)
+      this.unMakeRecipeComments(recipeCommentId)
+    }
+
   async getByRecipeId(recipeId){
   AppState.recipeComments = []
   const res = await api.get(`api/recipes/${recipeId}/recipeComments`)
@@ -27,6 +33,14 @@ class RecipeCommentsService{
       return AppState.recipeComments = recipeCommentData.map(pojo => new RecipeComment(pojo));
     }
     return AppState.activeRecipeComment = new RecipeComment(recipeCommentData);
+  }
+
+  unMakeRecipeComments(recipeCommentId){
+    if (AppState.recipeComments.length > 0) {
+      const recipeCommentIndex = AppState.recipeComments.findIndex(recipeComment => recipeComment.id == recipeCommentId)
+      AppState.recipeComments.splice(recipeCommentIndex, 1)
+    }
+    AppState.activeRecipeComment = null
   }
 }
 
