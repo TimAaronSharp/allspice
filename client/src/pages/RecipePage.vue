@@ -9,6 +9,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentForm.js'
 import CreateCommentForm from '@/components/CreateCommentForm.vue';
 import { commentsService } from '@/services/CommentsService.js';
+import CreateRecipeNoteForm from '@/components/CreateRecipeNoteForm.vue';
+import { toggleCreateRecipeNoteForm } from '@/composables/useToggleCreateRecipeNoteForm.js';
+import { recipeNotesService } from '@/services/RecipeNotesService.js';
+import EditRecipeNoteForm from '@/components/EditRecipeNoteForm.vue';
+import { toggleEditRecipeNoteForm } from '@/composables/useToggleEditRecipeNoteForm.js';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -18,23 +23,34 @@ const router = useRouter()
 const favorite = computed(() => AppState.activeFavorite)
 const recipeId = Number(route.params.recipeId)
 const comments = computed(() => AppState.comments)
+const recipeNote = computed(() => AppState.activeRecipeNote)
+const activeRecipeNote = computed(() => AppState.activeRecipeNote)
 
 const createCommentFormToggle = computed(() => AppState.createCommentFormToggle)
+const createRecipeNoteFormToggle = computed(() => AppState.createRecipeNoteFormToggle)
+const editRecipeNoteFormToggle = computed(() => AppState.editRecipeNoteFormToggle)
+
 
 // NOTE The recipe category is stored lowercase in the database. This makes the first letter uppercase for display.
 const recipeCategory = computed(() => recipe.value?.category[0].toUpperCase() + recipe.value?.category.slice(1))
 
-// NOTE getFavoriteByRecipeIdAndAccountId() is called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then getFavoriteByRecipeIdAndAccountId() will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
+// NOTE getFavoriteByRecipeIdAndAccountId() and getRecipeNote() are called in onMounted and watch(account) because if the page is refreshed onMounted happens before the account info is able to be retrieved. Likewise, if account is already defined then they will never be called in watch(account). Calling in both ensures the recipe is checked to see if it is favorited by the logged in user.
 onMounted(() => {
   clearRecipeInfo()
+  resetToggles()
   getRecipeById()
+  getRecipeNote()
   getFavoriteByRecipeIdAndAccountId()
-  AppState.createCommentFormToggle = false
 })
 
-watch(account, getFavoriteByRecipeIdAndAccountId)
+watch(account, () => {
+  getFavoriteByRecipeIdAndAccountId()
+  getRecipeNote()
+})
+
 
 function clearRecipeInfo() {
+  // debugger
   AppState.activeRecipe = null
   AppState.activeFavorite = null
   AppState.ingredients = []
@@ -57,15 +73,29 @@ async function createFavorite() {
 
 async function deleteFavorite() {
   try {
-    // const confirmed = await Pop.confirm(`Remove "${recipe.value.name}" from your favorites?`, "No", "Yes")
-    // if (confirmed) {
-    // debugger
-    await favoritesService.delete(favorite.value.id)
-    Pop.toast(`${recipe.value.name} removed from favorites.`)
-    // }
+    const confirmed = await Pop.confirm(`Remove "${recipe.value.name}" from your favorites?`, "", "Yes", "No")
+    if (confirmed) {
+      // debugger
+      await favoritesService.delete(favorite.value.id)
+      Pop.toast(`${recipe.value.name} removed from favorites.`)
+    }
   }
   catch (error) {
     Pop.error(error);
+  }
+}
+
+async function deleteRecipeNote() {
+  try {
+    // debugger
+    const confirmed = await Pop.confirm('Are you sure you want to delete this recipe note?', 'This action cannot be undone.', "Yes", "No")
+    if (confirmed) {
+      await recipeNotesService.delete(activeRecipeNote.value.id)
+    }
+  }
+  catch (error) {
+    Pop.error(error, "Could not delete recipe note.");
+    logger.error("Could not delete recipe note.".toUpperCase(), error)
   }
 }
 
@@ -73,7 +103,7 @@ async function getCommentsByRecipeId() {
   try {
     await commentsService.getByRecipeId(route.params.recipeId);
     if (comments.value) {
-      logger.log("Computed comments are ", comments.value)
+      // logger.log("Computed comments are ", comments.value)
     }
   }
   catch (error) {
@@ -84,10 +114,11 @@ async function getCommentsByRecipeId() {
 // NOTE Try handling the account stuff only on the server side (Also maybe do an if() for whether or not userInfo is found?)
 async function getFavoriteByRecipeIdAndAccountId() {
   try {
+    // debugger
     if (account.value) {
       await favoritesService.getFavoriteByRecipeIdAndAccountId(route.params.recipeId)
     }
-    logger.log("AppState.activeFavorite is ", AppState.activeFavorite)
+    // logger.log("AppState.activeFavorite is ", AppState.activeFavorite)
   }
   catch (error) {
     Pop.error(error, "Could not get favorite recipe information");
@@ -118,6 +149,26 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
   }
 }
 
+async function getRecipeNote() {
+  try {
+    // debugger
+    if (account.value) {
+      // debugger
+      await recipeNotesService.getByRecipeIdAndAccountId(recipeId)
+    }
+  }
+  catch (error) {
+    Pop.error(error, "Could not get recipe note.");
+    logger.error("Could not get recipe note.".toUpperCase(), error)
+  }
+}
+
+function resetToggles() {
+  AppState.createCommentFormToggle = false
+  AppState.createRecipeNoteFormToggle = false
+  AppState.editRecipeNoteFormToggle = false
+}
+
 </script>
 
 <!-- NOTE Add a description to recipe models/database table. -->
@@ -139,8 +190,24 @@ async function getRecipeIngredientsByRecipeId(recipeId) {
             <p>{{ recipeCategory }}</p>
             <p>By: {{ recipe?.creator?.name }}</p>
             <!-- NOTE Recipe description here? -->
-
-
+            <div v-if="account">
+              <div v-if="!createRecipeNoteFormToggle && activeRecipeNote == null">
+                <button @click="toggleCreateRecipeNoteForm()"
+                  class="mdi mdi-plus-circle btn btn-outline-secondary">Create Note</button>
+              </div>
+              <CreateRecipeNoteForm v-if="createRecipeNoteFormToggle" :recipeProp="recipe" />
+              <div v-if="recipeNote != null">
+                <h5>Recipe Notes:</h5>
+                <p v-if="!editRecipeNoteFormToggle">{{ recipeNote.body }}</p>
+                <EditRecipeNoteForm v-if="editRecipeNoteFormToggle" :recipeProp="recipe" />
+                <button v-if="!editRecipeNoteFormToggle" @click="toggleEditRecipeNoteForm()"
+                  class="mdi mdi-pencil btn btn-outline-secondary">Edit
+                  Note</button>
+                <button v-if="!editRecipeNoteFormToggle" @click="deleteRecipeNote()"
+                  class="mdi mdi-close-circle btn btn-outline-danger">Delete
+                  Note</button>
+              </div>
+            </div>
             <p v-for="ingredient in ingredients" :key="'ingredient' + ingredient.id">
               {{ ingredient.quantity }} {{ ingredient.name }}
             </p>

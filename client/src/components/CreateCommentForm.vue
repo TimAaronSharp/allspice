@@ -5,7 +5,7 @@ import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentFor
 import { logger } from '@/utils/Logger.js';
 import { commentsService } from '@/services/CommentsService.js';
 import { Recipe } from '@/models/Recipe.js';
-import { validateForm } from '@/composables/useValidateForm.js';
+import { validateWhiteSpace } from '@/composables/useValidateWhiteSpace.js';
 
 const props = defineProps({
   recipeProp: { type: Recipe, required: true }
@@ -19,11 +19,9 @@ const editableCommentData = ref({
 async function createComment(event) {
   try {
     // debugger
-    const validatedForm = validateForm(event)
+    const validatedForm = validateWhiteSpace(event)
     // debugger
-    if (validatedForm === "") {
-      return
-    }
+    if (validatedForm === "") return
     await commentsService.create(editableCommentData.value)
     editableCommentData.value.body = ""
     toggleCreateCommentForm()

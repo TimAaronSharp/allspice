@@ -1,21 +1,21 @@
 import { DatabaseItem } from "./DatabaseItem.js";
 
 
-export class Note extends DatabaseItem{
+export class RecipeNote extends DatabaseItem{
   /**
-   * @typedef NoteData
+   * @typedef RecipeNoteData
    * @property {number} id
    * @property {Date} createdAt
    * @property {Date} updatedAt
    * @property {number} recipeId
    * @property {string} body
-   * @property {string} creatorId
-   * @param {NoteData} data 
+   * @property {string} accountId
+   * @param {RecipeNoteData} data 
    */
   constructor(data){
     super(data)
     this.recipeId = data.recipeId
     this.body = data.body
-    this.creatorId = data.creatorId
+    this.accountId = data.accountId
   }
 }
