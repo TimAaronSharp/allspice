@@ -137,13 +137,16 @@ CREATE TABLE allspice_recipe_comments_likes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    comment_id INT NOT NULL,
+    recipe_comment_id INT NOT NULL,
     account_id VARCHAR(255) NOT NULL,
-    FOREIGN KEY (comment_id) REFERENCES allspice_recipe_comments (id) ON DELETE CASCADE,
+    FOREIGN KEY (recipe_comment_id) REFERENCES allspice_recipe_comments (id) ON DELETE CASCADE,
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
 DROP TABLE allspice_recipe_comments_likes
+
+ALTER TABLE allspice_recipe_comments_likes
+RENAME COLUMN comment_id TO recipe_comment_id
 
 -- allspice_recipe_comments_likes END
 

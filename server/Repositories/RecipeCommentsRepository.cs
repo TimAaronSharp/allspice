@@ -1,15 +1,15 @@
 namespace allspice.Repositories;
 
-public class CommentsRepository
+public class RecipeCommentsRepository
 {
   private readonly IDbConnection _db;
 
-  public CommentsRepository(IDbConnection db)
+  public RecipeCommentsRepository(IDbConnection db)
   {
     _db = db;
   }
 
-  public Comment Create(Comment commentData)
+  public RecipeComment Create(RecipeComment recipeCommentData)
   {
     string sql = @"
     INSERT INTO
@@ -18,10 +18,10 @@ public class CommentsRepository
     
     SELECT * FROM allspice_recipe_comments WHERE id = LAST_INSERT_ID();";
 
-    return _db.Query<Comment>(sql, commentData).SingleOrDefault();
+    return _db.Query<RecipeComment>(sql, recipeCommentData).SingleOrDefault();
   }
 
-  public List<Comment> GetByRecipeId(int recipeId)
+  public List<RecipeComment> GetByRecipeId(int recipeId)
   {
     string sql = @"
     SELECT
@@ -31,10 +31,10 @@ public class CommentsRepository
     INNER JOIN accounts ON allspice_recipe_comments.creator_id = accounts.id
     WHERE allspice_recipe_comments.recipe_id = @recipeId;";
 
-    return _db.Query(sql, (Comment comment, Profile account) =>
+    return _db.Query(sql, (RecipeComment recipeComment, Profile account) =>
     {
-      comment.Creator = account;
-      return comment;
+      recipeComment.Creator = account;
+      return recipeComment;
     }, new { recipeId }).ToList();
   }
 }

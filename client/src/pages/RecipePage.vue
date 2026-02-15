@@ -6,14 +6,15 @@ import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
 import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { toggleCreateCommentForm } from '@/composables/useToggleCreateCommentForm.js'
-import CreateCommentForm from '@/components/CreateCommentForm.vue';
-import { commentsService } from '@/services/CommentsService.js';
+import { toggleCreateRecipeCommentForm } from '@/composables/useToggleCreateRecipeCommentForm.js'
+import CreateRecipeCommentForm from '@/components/CreateRecipeCommentForm.vue';
+import { recipeCommentsService } from '@/services/RecipeCommentsService.js';
 import CreateRecipeNoteForm from '@/components/CreateRecipeNoteForm.vue';
 import { toggleCreateRecipeNoteForm } from '@/composables/useToggleCreateRecipeNoteForm.js';
 import { recipeNotesService } from '@/services/RecipeNotesService.js';
 import EditRecipeNoteForm from '@/components/EditRecipeNoteForm.vue';
 import { toggleEditRecipeNoteForm } from '@/composables/useToggleEditRecipeNoteForm.js';
+import RecipeComment from '@/components/RecipeComment.vue';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -22,11 +23,11 @@ const route = useRoute()
 const router = useRouter()
 const favorite = computed(() => AppState.activeFavorite)
 const recipeId = Number(route.params.recipeId)
-const comments = computed(() => AppState.comments)
+const recipeComments = computed(() => AppState.recipeComments)
 const recipeNote = computed(() => AppState.activeRecipeNote)
 const activeRecipeNote = computed(() => AppState.activeRecipeNote)
 
-const createCommentFormToggle = computed(() => AppState.createCommentFormToggle)
+const createRecipeCommentFormToggle = computed(() => AppState.createRecipeCommentFormToggle)
 const createRecipeNoteFormToggle = computed(() => AppState.createRecipeNoteFormToggle)
 const editRecipeNoteFormToggle = computed(() => AppState.editRecipeNoteFormToggle)
 
@@ -99,16 +100,16 @@ async function deleteRecipeNote() {
   }
 }
 
-async function getCommentsByRecipeId() {
+async function getRecipeCommentsByRecipeId() {
   try {
-    await commentsService.getByRecipeId(route.params.recipeId);
-    if (comments.value) {
-      // logger.log("Computed comments are ", comments.value)
+    await recipeCommentsService.getByRecipeId(route.params.recipeId);
+    if (recipeComments.value) {
+      // logger.log("Computed recipe comments are ", recipe comments.value)
     }
   }
   catch (error) {
-    Pop.error(error, "Could not get comments for recipe.");
-    logger.error("Could not get comments for recipe.".toUpperCase(), error);
+    Pop.error(error, "Could not get recipe comments for recipe.");
+    logger.error("Could not get recipe comments for recipe.".toUpperCase(), error);
   }
 }
 // NOTE Try handling the account stuff only on the server side (Also maybe do an if() for whether or not userInfo is found?)
@@ -131,7 +132,7 @@ async function getRecipeById() {
     // debugger
     await recipesService.getById(route.params.recipeId)
     getRecipeIngredientsByRecipeId(route.params.recipeId)
-    getCommentsByRecipeId()
+    getRecipeCommentsByRecipeId()
   }
   catch (error) {
     Pop.error(error, "Could not get recipe by id");
@@ -164,7 +165,7 @@ async function getRecipeNote() {
 }
 
 function resetToggles() {
-  AppState.createCommentFormToggle = false
+  AppState.createRecipeCommentFormToggle = false
   AppState.createRecipeNoteFormToggle = false
   AppState.editRecipeNoteFormToggle = false
 }
@@ -223,16 +224,17 @@ function resetToggles() {
     <div>
       <h4>Comments:</h4>
       <div v-if="account">
-        <button @click="toggleCreateCommentForm()" v-if="!createCommentFormToggle"
+        <button @click="toggleCreateRecipeCommentForm()" v-if="!createRecipeCommentFormToggle"
           class="mdi mdi-plus-circle btn btn-outline-secondary">
           Comment</button>
-        <CreateCommentForm v-if="createCommentFormToggle" :recipeProp="recipe" />
+        <CreateRecipeCommentForm v-if="createRecipeCommentFormToggle" :recipeProp="recipe" />
       </div>
       <div>
-        <div v-for="comment in comments" class="d-flex" :key="'Comment ' + comment?.id">
-          <img :src="comment?.creator.picture" :alt="comment?.creator?.name + `'s profile picture.'`">
-          <p>{{ comment?.creator?.name }}</p>
-          <p> {{ comment?.body }}</p>
+        <div>
+          <RecipeComment v-for="recipeComment in recipeComments" class="d-flex"
+            :key="'RecipeComment ' + recipeComment?.id" :recipeCommentProp="recipeComment" />
+          <!-- <p>{{ recipeComment?.creator?.name }}</p> -->
+          <!-- <p> {{ recipeComment?.body }}</p> -->
         </div>
       </div>
     </div>

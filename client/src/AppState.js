@@ -23,11 +23,11 @@ export const AppState = reactive({
   ingredientsToCreate:[],
   newIngredient: false,
   categories:[],
-  /** @type {import('./models/Comment.js').Comment[]} comments from the database*/
-  comments:[],
-  /** @type {import('./models/Comment.js').Comment} comments from the database*/
-  activeComment: null,
-  createCommentFormToggle: false,
+  /** @type {import('./models/RecipeComment.js').RecipeComment[]} recipe comments from the database*/
+  recipeComments:[],
+  /** @type {import('./models/RecipeComment.js').RecipeComment} recipe comments from the database*/
+  activeRecipeComment: null,
+  createRecipeCommentFormToggle: false,
   createRecipeNoteFormToggle: false,
   editRecipeNoteFormToggle: false,
   /** @type {import('./models/RecipeNote.js').RecipeNote} selected recipe note from the database*/

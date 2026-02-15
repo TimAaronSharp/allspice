@@ -2,9 +2,9 @@ import { Profile } from "./Account.js";
 import { DatabaseItem } from "./DatabaseItem.js";
 
 
-export class Comment extends DatabaseItem{
+export class RecipeComment extends DatabaseItem{
   /**
-   * @typedef CommentData
+   * @typedef RecipeCommentData
    * @property {number} id
    * @property {Date} createdAt
    * @property {Date} updatedAt
@@ -12,7 +12,7 @@ export class Comment extends DatabaseItem{
    * @property {number} recipeId
    * @property {string} creatorId
    * @property {Profile} creator
-   * @param {CommentData} data 
+   * @param {RecipeCommentData} data 
    */
   constructor(data){
     super(data)
