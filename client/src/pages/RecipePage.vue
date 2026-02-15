@@ -233,8 +233,6 @@ function resetToggles() {
         <div>
           <RecipeComment v-for="recipeComment in recipeComments" class="d-flex"
             :key="'RecipeComment ' + recipeComment?.id" :recipeCommentProp="recipeComment" />
-          <!-- <p>{{ recipeComment?.creator?.name }}</p> -->
-          <!-- <p> {{ recipeComment?.body }}</p> -->
         </div>
       </div>
     </div>
