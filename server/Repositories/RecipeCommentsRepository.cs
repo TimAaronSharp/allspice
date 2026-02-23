@@ -16,9 +16,18 @@ public class RecipeCommentsRepository
     allspice_recipe_comments(body, recipe_id, creator_id)
     VALUES(@Body, @RecipeId, @CreatorId);
     
-    SELECT * FROM allspice_recipe_comments WHERE id = LAST_INSERT_ID();";
+    SELECT 
+    allspice_recipe_comments.*,
+    accounts.*
+    FROM allspice_recipe_comments
+    INNER JOIN accounts ON accounts.id = allspice_recipe_comments.creator_id
+    WHERE allspice_recipe_comments.id = LAST_INSERT_ID();";
 
-    return _db.Query<RecipeComment>(sql, recipeCommentData).SingleOrDefault();
+    return _db.Query(sql, (RecipeComment recipeComment, Profile account) =>
+    {
+      recipeComment.Creator = account;
+      return recipeComment;
+    }, recipeCommentData).SingleOrDefault();
   }
 
   public void Delete(int recipeCommentId)
