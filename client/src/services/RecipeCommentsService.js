@@ -23,6 +23,16 @@ class RecipeCommentsService{
     this.unMakeRecipeComments(recipeCommentId)
   }
 
+  async edit(editedRecipeCommentData){
+    const recipeCommentId = editedRecipeCommentData.id
+    const res = await api.put(`api/recipeComments/${recipeCommentId}`, editedRecipeCommentData)
+    const updatedRecipeComment = this.makeRecipeComments(res.data)
+    // @ts-ignore - makeRecipeComments() can return either a single RecipeComment or a RecipeComment[]. Functionally will work but has a type error/warning. Ignoring for the time being and will investigate ways to properly remove the error (such as TypeScript overloading).
+    const recipeCommentIndex = AppState.recipeComments.findIndex(recipeComment => recipeComment.id == updatedRecipeComment.id)
+    // @ts-ignore - makeRecipeComments() can return either a single RecipeComment or a RecipeComment[]. Functionally will work but has a type error/warning. Ignoring for the time being and will investigate ways to properly remove the error (such as TypeScript overloading).
+    AppState.recipeComments.splice(recipeCommentIndex, 1, updatedRecipeComment)
+  }
+
   async getByRecipeId(recipeId){
   AppState.recipeComments = []
   const res = await api.get(`api/recipes/${recipeId}/recipeComments`)

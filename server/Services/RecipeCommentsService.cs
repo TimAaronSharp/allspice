@@ -26,6 +26,21 @@ public class RecipeCommentsService
     return $"Recipe Comment id :{recipeCommentId} has been deleted. You monster.";
   }
 
+  public RecipeComment Edit(RecipeComment editedRecipeCommentData, Profile userInfo)
+  {
+    RecipeComment recipeCommentToEdit = GetById(editedRecipeCommentData.Id);
+
+    if (recipeCommentToEdit.CreatorId != userInfo.Id)
+    {
+      throw new Exception($"You cannot edit another user's recipe comment, {userInfo.Name}.".ToUpper());
+    }
+
+    recipeCommentToEdit.Body = editedRecipeCommentData.Body ?? recipeCommentToEdit.Body;
+
+    RecipeComment updatedRecipeComment = _repo.Edit(recipeCommentToEdit);
+    return updatedRecipeComment;
+  }
+
   private RecipeComment GetById(int recipeCommentId)
   {
     RecipeComment foundRecipeComment = _repo.GetById(recipeCommentId);

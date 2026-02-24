@@ -14,7 +14,7 @@ import { toggleCreateRecipeNoteForm } from '@/composables/useToggleCreateRecipeN
 import { recipeNotesService } from '@/services/RecipeNotesService.js';
 import EditRecipeNoteForm from '@/components/EditRecipeNoteForm.vue';
 import { toggleEditRecipeNoteForm } from '@/composables/useToggleEditRecipeNoteForm.js';
-import RecipeComment from '@/components/RecipeComment.vue';
+import RecipeCommentCard from '@/components/RecipeCommentCard.vue';
 
 const account = computed(() => AppState.account)
 const recipe = computed(() => AppState.activeRecipe)
@@ -231,7 +231,7 @@ function resetToggles() {
       </div>
       <div>
         <div>
-          <RecipeComment v-for="recipeComment in recipeComments" class="d-flex"
+          <RecipeCommentCard v-for="recipeComment in recipeComments" class="d-flex"
             :key="'RecipeComment ' + recipeComment?.id" :recipeCommentProp="recipeComment" />
         </div>
       </div>

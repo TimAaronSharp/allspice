@@ -44,4 +44,20 @@ public class RecipeCommentsController : ControllerBase
       return BadRequest(exception.Message);
     }
   }
+
+  [Authorize]
+  [HttpPut("{recipeCommentId}")]
+  public async Task<ActionResult<RecipeComment>> Edit([FromBody] RecipeComment editedRecipeCommentData)
+  {
+    try
+    {
+      Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      editedRecipeCommentData.CreatorId = userInfo.Id;
+      return Ok(_recipeCommentsService.Edit(editedRecipeCommentData, userInfo));
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }

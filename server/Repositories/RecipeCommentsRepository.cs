@@ -42,6 +42,28 @@ public class RecipeCommentsRepository
     }
   }
 
+  public RecipeComment Edit(RecipeComment editedRecipeCommentData)
+  {
+    string sql = @"
+    UPDATE allspice_recipe_comments
+    SET
+    body = @Body
+    WHERE id = @Id LIMIT 1;
+    
+    SELECT
+    allspice_recipe_comments.*,
+    accounts.*
+    FROM allspice_recipe_comments
+    INNER JOIN accounts ON allspice_recipe_comments.creator_id = accounts.id
+    WHERE allspice_recipe_comments.id = @Id;";
+
+    return _db.Query(sql, (RecipeComment recipeComment, Profile account) =>
+    {
+      recipeComment.Creator = account;
+      return recipeComment;
+    }, editedRecipeCommentData).SingleOrDefault();
+  }
+
   public RecipeComment GetById(int recipeCommentId)
   {
     string sql = "SELECT * FROM allspice_recipe_comments WHERE id = @recipeCommentId;";
