@@ -8,15 +8,19 @@ import { Pop } from '@/utils/Pop.js';
 import { computed } from 'vue';
 import EditRecipeCommentForm from './EditRecipeCommentForm.vue';
 
-const account = computed(() => AppState.account)
-const activeRecipeComment = computed(() => AppState.activeRecipeComment)
-const editRecipeCommentFormToggle = computed(() => AppState.editRecipeCommentFormToggle)
 
 const props = defineProps({
   recipeCommentProp: { type: RecipeComment, required: true }
 })
 
-const wasEdited = new Date(props.recipeCommentProp.updatedAt) > new Date(props.recipeCommentProp.createdAt)
+const account = computed(() => AppState.account)
+const activeRecipeComment = computed(() => AppState.activeRecipeComment)
+const editRecipeCommentFormToggle = computed(() => AppState.editRecipeCommentFormToggle)
+const recipeComments = computed(() => AppState.recipeComments)
+const recipeCommentIndex = AppState.recipeComments.findIndex(recipeComment => recipeComment.id == props.recipeCommentProp.id)
+
+// This is a createdAt vs updatedAt time comparison to render whether a comment has been edited. The logic is down in the html and works there but is erroring out when I declare it here because it can't read the unassigned properties. Will look into seeing if I can make this work to make the html easier to digest but it is currently working.
+// const wasEdited = computed(() => new Date(recipeComments[recipeCommentIndex].updatedAt) > new Date(recipeComments[recipeCommentIndex].createdAt))
 
 async function deleteRecipeComment() {
   try {
@@ -45,15 +49,17 @@ function setActiveRecipeCommentToEdit() {
         <button @click="deleteRecipeComment()" class="mdi mdi-close-circle text-red transparent-btn-style"></button>
         <button @click="setActiveRecipeCommentToEdit()" class="mdi mdi-pencil transparent-btn-style"></button>
       </div>
+      <p>{{ recipeCommentProp.creator.name }}</p>
+      <div
+        v-if="new Date(recipeComments[recipeCommentIndex].updatedAt) > new Date(recipeComments[recipeCommentIndex].createdAt)"
+        class="d-flex">
+        <p>*Edited*</p>
+      </div>
       <div
         v-if="account?.id == recipeCommentProp.creatorId && editRecipeCommentFormToggle && activeRecipeComment.id == recipeCommentProp.id">
         <EditRecipeCommentForm :editRecipeCommentProp="recipeCommentProp" />
       </div>
-      <div v-if="wasEdited" class="d-flex">
-        <p>{{ recipeCommentProp.creator.name }}</p>
-        <p>*Edited*</p>
-      </div>
-      <p>{{ recipeCommentProp.body }}</p>
+      <p v-else>{{ recipeCommentProp.body }}</p>
     </div>
   </div>
 </template>

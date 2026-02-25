@@ -35,6 +35,7 @@ async function editRecipeComment(event) {
     await recipeCommentsService.edit(editableRecipeCommentData.value)
     editableRecipeCommentData.value.body = ""
     toggleEditRecipeCommentForm()
+    AppState.activeRecipeComment = null
   }
   catch (error) {
     Pop.error(error, "Could not edit recipe comment.");
