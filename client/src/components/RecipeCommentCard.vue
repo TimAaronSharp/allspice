@@ -26,6 +26,7 @@ async function deleteRecipeComment() {
   try {
     const confirmed = await Pop.confirm("Are you sure you want to delete this comment?", "This action cannot be undone.", "Yes", "No")
     if (confirmed) await recipeCommentsService.delete(props.recipeCommentProp.id)
+    Pop.toast("Comment has been deleted.")
   }
   catch (error) {
     Pop.error(error, "Could not delete recipe comment.");
