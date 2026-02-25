@@ -46,13 +46,12 @@ public class RecipeNotesController : ControllerBase
 
   [Authorize]
   [HttpPut("{recipeNoteId}")]
-  public async Task<ActionResult<RecipeNote>> Edit([FromBody] RecipeNote editedRecipeNoteData)
+  public async Task<ActionResult<RecipeNote>> Edit([FromBody] RecipeNote editedRecipeNoteData, int recipeNoteId)
   {
     try
     {
       Profile userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      editedRecipeNoteData.AccountId = userInfo.Id;
-      return Ok(_recipeNotesService.Edit(editedRecipeNoteData, userInfo));
+      return Ok(_recipeNotesService.Edit(editedRecipeNoteData, recipeNoteId, userInfo));
     }
     catch (Exception exception)
     {
