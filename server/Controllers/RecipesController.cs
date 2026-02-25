@@ -10,15 +10,15 @@ public class RecipesController : ControllerBase
   private readonly RecipesService _recipesService;
   private readonly Auth0Provider _auth0Provider;
   private readonly RecipeIngredientLinksService _recipeIngredientLinksService;
-  private readonly CommentsService _commentsService;
+  private readonly RecipeCommentsService _recipeCommentsService;
   private readonly RecipeNotesService _recipeNotesService;
 
-  public RecipesController(RecipesService recipesService, Auth0Provider auth0Provider, RecipeIngredientLinksService recipeIngredientLinksService, CommentsService commentsService, RecipeNotesService recipeNotesService)
+  public RecipesController(RecipesService recipesService, Auth0Provider auth0Provider, RecipeIngredientLinksService recipeIngredientLinksService, RecipeCommentsService recipeCommentsService, RecipeNotesService recipeNotesService)
   {
     _recipesService = recipesService;
     _auth0Provider = auth0Provider;
     _recipeIngredientLinksService = recipeIngredientLinksService;
-    _commentsService = commentsService;
+    _recipeCommentsService = recipeCommentsService;
     _recipeNotesService = recipeNotesService;
   }
 
@@ -112,12 +112,12 @@ public class RecipesController : ControllerBase
     }
   }
 
-  [HttpGet("{recipeId}/comments")]
-  public ActionResult<List<Comment>> GetCommentsByRecipeId(int recipeId)
+  [HttpGet("{recipeId}/recipeComments")]
+  public ActionResult<List<RecipeComment>> GetRecipeCommentsByRecipeId(int recipeId)
   {
     try
     {
-      return Ok(_commentsService.GetByRecipeId(recipeId));
+      return Ok(_recipeCommentsService.GetByRecipeId(recipeId));
     }
     catch (Exception exception)
     {

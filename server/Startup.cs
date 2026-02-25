@@ -52,8 +52,8 @@ public class Startup
     services.AddScoped<ProfilesRepository>();
     services.AddScoped<ProfilesService>();
 
-    services.AddScoped<CommentsRepository>();
-    services.AddScoped<CommentsService>();
+    services.AddScoped<RecipeCommentsRepository>();
+    services.AddScoped<RecipeCommentsService>();
 
     services.AddScoped<RecipeNotesRepository>();
     services.AddScoped<RecipeNotesService>();

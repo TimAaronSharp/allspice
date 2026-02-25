@@ -28,9 +28,9 @@ public class RecipeNotesService
   }
 
 
-  public RecipeNote Edit(RecipeNote editedRecipeNoteData, Profile userInfo)
+  public RecipeNote Edit(RecipeNote editedRecipeNoteData, int recipeNoteId, Profile userInfo)
   {
-    RecipeNote recipeNoteToEdit = GetByRecipeIdAndAccountId(editedRecipeNoteData.RecipeId, editedRecipeNoteData.AccountId);
+    RecipeNote recipeNoteToEdit = GetById(recipeNoteId);
 
     if (recipeNoteToEdit.AccountId != userInfo.Id)
     {

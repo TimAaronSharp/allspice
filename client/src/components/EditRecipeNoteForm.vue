@@ -15,15 +15,14 @@ const props = defineProps({
 })
 
 const editableRecipeNoteData = ref({
-  body: recipeNote.value.body,
-  recipeId: props.recipeProp.id
+  body: recipeNote.value.body
 })
 
 async function editRecipeNote(event) {
   try {
     const validatedForm = validateWhiteSpace(event)
     if (validatedForm === "") return
-    await recipeNotesService.edit(editableRecipeNoteData.value)
+    await recipeNotesService.edit(editableRecipeNoteData.value, recipeNote.value.id)
     editableRecipeNoteData.value.body = ""
     toggleEditRecipeNoteForm()
   }

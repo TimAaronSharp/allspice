@@ -16,9 +16,9 @@ class RecipeNotesService {
     AppState.activeRecipeNote = null
   }
 
-  async edit(editedRecipeNoteData){
-    const recipeId = editedRecipeNoteData.recipeId
-    const res = await api.put(`api/recipeNotes/${recipeId}`, editedRecipeNoteData)
+  // FIXME This is currently working, but basically by accident. The route should be `api/recipeNotes/${recipeNoteId}`. It is working because on the server it is finding the recipe note by recipeId AND accountId, which was a method already used for getting the correct recipe note for the recipe and account. Change this to correctly send the recipeNoteId and fix it on the backend too!!! 
+  async edit(editedRecipeNoteData, recipeNoteId){
+    const res = await api.put(`api/recipeNotes/${recipeNoteId}`, editedRecipeNoteData)
     // logger.log("RecipeNotesService.edit() returned ", res.data)
     this.makeRecipeNotes(res.data)
     // logger.log("makeRecipeNotes after edit() returned ", madeEditedRecipe)

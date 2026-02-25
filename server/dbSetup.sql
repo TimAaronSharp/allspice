@@ -30,6 +30,9 @@ CREATE TABLE allspice_recipes (
 
 ALTER TABLE allspice_recipes RENAME COLUMN title TO name;
 
+ALTER TABLE allspice_recipes
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
+
 DROP TABLE allspice_recipes
 -- allspice_recipes END
 
@@ -44,6 +47,9 @@ CREATE TABLE allspice_ingredients (
     origin_recipe_id INT NOT NULL,
     UNIQUE KEY uq_ingredient_name_quantity (name, quantity)
 )
+
+ALTER TABLE allspice_ingredients
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
 
 DROP TABLE allspice_ingredients
 
@@ -75,6 +81,9 @@ CREATE TABLE allspice_recipe_ingredient_links (
 ALTER TABLE allspice_recipe_ingredient_links
 ADD creator_id VARCHAR(255) NOT NULL
 
+ALTER TABLE allspice_recipe_ingredient_links
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
+
 DROP TABLE allspice_recipe_ingredient_links;
 -- allspice_recipe_ingredient_links END
 
@@ -92,6 +101,9 @@ CREATE TABLE allspice_favorites (
 
 ALTER TABLE allspice_favorites
 ADD UNIQUE KEY uq_recipe_account_ids (recipe_id, account_id)
+
+ALTER TABLE allspice_favorites
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
 
 DROP TABLE allspice_favorites
 
@@ -111,6 +123,9 @@ CREATE TABLE allspice_recipe_notes (
     UNIQUE KEY uq_recipe_creator_ids (recipe_id, account_id)
 )
 
+ALTER TABLE allspice_recipe_notes
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
+
 DROP TABLE allspice_recipe_notes
 
 -- allspice_recipe_notes END
@@ -128,6 +143,9 @@ CREATE TABLE allspice_recipe_comments (
     FOREIGN KEY (creator_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
+ALTER TABLE allspice_recipe_comments
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
+
 DROP TABLE allspice_recipe_comments
 
 -- allspice_recipe_comments END
@@ -137,13 +155,19 @@ CREATE TABLE allspice_recipe_comments_likes (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    comment_id INT NOT NULL,
+    recipe_comment_id INT NOT NULL,
     account_id VARCHAR(255) NOT NULL,
-    FOREIGN KEY (comment_id) REFERENCES allspice_recipe_comments (id) ON DELETE CASCADE,
+    FOREIGN KEY (recipe_comment_id) REFERENCES allspice_recipe_comments (id) ON DELETE CASCADE,
     FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 )
 
+ALTER TABLE allspice_recipe_comments_likes
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
+
 DROP TABLE allspice_recipe_comments_likes
+
+ALTER TABLE allspice_recipe_comments_likes
+RENAME COLUMN comment_id TO recipe_comment_id
 
 -- allspice_recipe_comments_likes END
 
@@ -156,6 +180,9 @@ CREATE TABLE allspice_recipe_tags (
     name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     UNIQUE KEY uq_recipe_tags_name (name)
 )
+
+ALTER TABLE allspice_recipe_tags
+MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
 
 DROP TABLE allspice_recipe_tags;
 
