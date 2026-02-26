@@ -8,4 +8,10 @@ public class RecipeCommentLikesService
   {
     _repo = repo;
   }
+
+  public string Create(int recipeCommentId, string userId)
+  {
+    _repo.Create(recipeCommentId, userId);
+    return "Comment has been liked!";
+  }
 }

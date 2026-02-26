@@ -30,6 +30,9 @@ CREATE TABLE allspice_recipes (
 
 ALTER TABLE allspice_recipes RENAME COLUMN title TO name;
 
+ALTER TABLE allspice_recipe_comments_likes
+RENAME allspice_recipe_comment_likes
+
 ALTER TABLE allspice_recipes
 MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
 

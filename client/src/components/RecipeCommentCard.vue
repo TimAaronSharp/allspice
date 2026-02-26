@@ -37,7 +37,7 @@ async function deleteRecipeComment() {
 
 async function likeRecipeComment() {
   try {
-    await recipeCommentLikesService.create(props.recipeCommentProp.id)
+    await recipeCommentLikesService.create(props.recipeCommentProp)
   }
   catch (error) {
     Pop.error(error, "Could not like recipe comment.");
