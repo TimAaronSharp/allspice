@@ -169,6 +169,9 @@ DROP TABLE allspice_recipe_comments_likes
 ALTER TABLE allspice_recipe_comments_likes
 RENAME COLUMN comment_id TO recipe_comment_id
 
+ALTER TABLE allspice_recipe_comments_likes
+ADD UNIQUE KEY uq_recipe_comment_account_ids (recipe_comment_id, account_id)
+
 -- allspice_recipe_comments_likes END
 
 -- allspice_recipe_tags START
