@@ -7,6 +7,7 @@ import { logger } from '@/utils/Logger.js';
 import { Pop } from '@/utils/Pop.js';
 import { computed } from 'vue';
 import EditRecipeCommentForm from './EditRecipeCommentForm.vue';
+import { recipeCommentLikesService } from '@/services/RecipeCommentLikesService.js';
 
 
 const props = defineProps({
@@ -31,6 +32,16 @@ async function deleteRecipeComment() {
   catch (error) {
     Pop.error(error, "Could not delete recipe comment.");
     logger.error("Could not delete recipe comment.".toUpperCase(), error)
+  }
+}
+
+async function likeRecipeComment() {
+  try {
+    await recipeCommentLikesService.create(props.recipeCommentProp)
+  }
+  catch (error) {
+    Pop.error(error, "Could not like recipe comment.");
+    logger.error("Could not like recipe comment.".toUpperCase(), error)
   }
 }
 
@@ -61,6 +72,10 @@ function setActiveRecipeCommentToEdit() {
         <EditRecipeCommentForm :editRecipeCommentProp="recipeCommentProp" />
       </div>
       <p v-else>{{ recipeCommentProp.body }}</p>
+      <div>
+        <button @click="likeRecipeComment()" type="button"
+          class="mdi mdi-thumb-up-outline transparent-btn-style"></button>
+      </div>
     </div>
   </div>
 </template>

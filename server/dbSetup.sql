@@ -30,6 +30,9 @@ CREATE TABLE allspice_recipes (
 
 ALTER TABLE allspice_recipes RENAME COLUMN title TO name;
 
+ALTER TABLE allspice_recipe_comments_likes
+RENAME allspice_recipe_comment_likes
+
 ALTER TABLE allspice_recipes
 MODIFY COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Latest Update'
 
@@ -168,6 +171,9 @@ DROP TABLE allspice_recipe_comments_likes
 
 ALTER TABLE allspice_recipe_comments_likes
 RENAME COLUMN comment_id TO recipe_comment_id
+
+ALTER TABLE allspice_recipe_comments_likes
+ADD UNIQUE KEY uq_recipe_comment_account_ids (recipe_comment_id, account_id)
 
 -- allspice_recipe_comments_likes END
 
